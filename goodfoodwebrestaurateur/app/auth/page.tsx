@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -17,11 +18,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  email: z.string().email("Adresse email invalide"),
+  password: z
+    .string()
+    .min(6, "Le mot de passe doit contenir au moins 6 caractères"),
 });
 
-export default function LoginPage() {
+export default function AuthPage() {
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -31,13 +35,14 @@ export default function LoginPage() {
   });
 
   const onSubmit = (data: any) => {
-    console.log("Login Data:", data);
+    console.log("Données de connexion:", data);
+    // Ajouter ici la logique d'authentification
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="w-full max-w-md space-y-6 bg-white p-8 shadow-lg rounded-lg">
-        <h2 className="text-center text-2xl font-bold">Connectez-vous</h2>
+        <h2 className="text-center text-2xl font-bold">Connexion</h2>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -86,6 +91,17 @@ export default function LoginPage() {
             </Button>
           </form>
         </Form>
+
+        <div className="text-center">
+          <p>Pas encore de compte ?</p>
+          <Button
+            onClick={() => router.push("/create-company")}
+            className="mt-2 w-full text-white hover:opacity-90"
+            style={{ backgroundColor: "#34A0A4" }}
+          >
+            Créer un restaurant
+          </Button>
+        </div>
       </div>
     </div>
   );
