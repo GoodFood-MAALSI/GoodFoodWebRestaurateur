@@ -41,6 +41,19 @@ export default function CreateRestaurantPage() {
   const { id } = useParams();
   const router = useRouter();
 
+  interface RestaurantForm {
+    name: string;
+    description: string;
+    street_number: string;
+    street: string;
+    city: string;
+    postal_code: string;
+    country: string;
+    email: string;
+    phone_number: string;
+  }
+  
+
   const form = useForm({
     resolver: zodResolver(restaurantSchema),
     defaultValues: {
@@ -79,7 +92,7 @@ export default function CreateRestaurantPage() {
     }
   }, [id, form]);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: RestaurantForm) => {
     try {
       const formattedData = {
         ...data,
