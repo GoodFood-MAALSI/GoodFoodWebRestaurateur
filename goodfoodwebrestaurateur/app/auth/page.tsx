@@ -24,6 +24,12 @@ const loginSchema = z.object({
     .min(6, "Le mot de passe doit contenir au moins 6 caractères"),
 });
 
+interface LoginForm {
+  email: string;
+  password: string;
+}
+
+
 export default function AuthPage() {
   const router = useRouter();
   const form = useForm({
@@ -34,7 +40,7 @@ export default function AuthPage() {
     },
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data : LoginForm) => {
     console.log("Données de connexion:", data);
     // Ajouter ici la logique d'authentification
   };

@@ -17,6 +17,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+interface RestaurantForm {
+  name: string;
+  description: string;
+  street_number: string;
+  street: string;
+  city: string;
+  postal_code: string;
+  country: string;
+  email: string;
+  phone_number: string;
+}
+
+
 const restaurantSchema = z.object({
   name: z
     .string()
@@ -79,7 +92,7 @@ export default function CreateRestaurantPage() {
     }
   }, [id, form]);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: RestaurantForm) => {
     try {
       const formattedData = {
         ...data,
