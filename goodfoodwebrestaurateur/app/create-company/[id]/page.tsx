@@ -288,9 +288,7 @@ export default function CreateRestaurantPage() {
             </div>
           </form>
         </Form>
-        <div className="text-center space-y-2">
-          <p>Déjà un compte ?</p>
-        </div>
+        <p>Déjà un compte ?</p>
         <Button
           type="button"
           onClick={() => router.push("/auth")}
