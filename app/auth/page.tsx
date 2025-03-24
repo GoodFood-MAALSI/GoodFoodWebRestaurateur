@@ -12,10 +12,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/components/ui/shadcn/form";
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/shadcn/input";
+import { Button } from "@/components/ui/shadcn/button";
 
 const loginSchema = z.object({
   email: z.string().email("Adresse email invalide"),
@@ -29,7 +29,6 @@ interface LoginForm {
   password: string;
 }
 
-
 export default function AuthPage() {
   const router = useRouter();
   const form = useForm({
@@ -40,7 +39,7 @@ export default function AuthPage() {
     },
   });
 
-  const onSubmit = (data : LoginForm) => {
+  const onSubmit = (data: LoginForm) => {
     console.log("Données de connexion:", data);
     // Ajouter ici la logique d'authentification
   };
