@@ -13,9 +13,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/shadcn/form";
+import { Input } from "@/components/ui/shadcn/input";
+import { Button } from "@/components/ui/shadcn/button";
 
 interface RestaurantForm {
   name: string;
@@ -28,7 +28,6 @@ interface RestaurantForm {
   email: string;
   phone_number: string;
 }
-
 
 const restaurantSchema = z.object({
   name: z

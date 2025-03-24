@@ -13,9 +13,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/shadcn/form";
+import { Input } from "@/components/ui/shadcn/input";
+import { Button } from "@/components/ui/shadcn/button";
+import { URL_API } from "../constants";
 
 const restaurantSchema = z.object({
   name: z
@@ -52,7 +53,6 @@ export default function CreateRestaurantPage() {
     email: string;
     phone_number: string;
   }
-  
 
   const form = useForm({
     resolver: zodResolver(restaurantSchema),
@@ -73,9 +73,7 @@ export default function CreateRestaurantPage() {
     if (id) {
       const fetchRestaurant = async () => {
         try {
-          const response = await fetch(
-            `http://localhost:3005/restaurant/${id}`
-          );
+          const response = await fetch(URL_API + "/${id}");
           if (!response.ok) {
             throw new Error(
               "Erreur lors de la récupération des informations du restaurant"
