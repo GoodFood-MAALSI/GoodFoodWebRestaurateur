@@ -28,25 +28,17 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          cache-dependency-path: GoodFoodWebRestaurateur/package-lock.json
           
       # Install dependencies
       - run: npm ci
-        working-directory: GoodFoodWebRestaurateur
-
       # Build the project
       - run: npm run build --if-present
-        working-directory: GoodFoodWebRestaurateur
-
-
       # SonarQube scan
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          projectBaseDir: GoodFoodWebRestaurateur
-
+        
       - name: Check SonarQube Quality Gate
         uses: sonarsource/sonarqube-quality-gate-action@v1
         timeout-minutes: 5
