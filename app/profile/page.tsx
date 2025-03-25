@@ -133,9 +133,7 @@ const ProfileCard: React.FC = () => {
               />
             </div>
             <CardFooter className="flex justify-end space-x-2">
-              <Button type="submit" variant="primary">
-                Save
-              </Button>
+              <Button type="submit">Save</Button>
               <Button
                 type="button"
                 variant="secondary"

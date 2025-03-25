@@ -10,6 +10,8 @@ import {
   CardTitle,
 } from "@/components/ui/shadcn/card";
 
+import Image from "next/image";
+
 import { ClipboardList, BarChart3, Pencil } from "lucide-react";
 
 const features = [
@@ -37,7 +39,7 @@ const LandingPage: React.FC = () => {
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#B5E48C] to-[#1E6091] flex flex-col">
       <section className="flex flex-1 flex-col items-center justify-center px-4 py-12 text-center">
-        <img src="/GoodFood/logo.png"></img>
+        <Image src="/GoodFood/logo.png" alt="Logo" />
         <p className="text-lg text-white/80 mb-8 animate-fadeInUp">
           Développez votre activité avec notre plateforme de livraison
           tout-en-un.

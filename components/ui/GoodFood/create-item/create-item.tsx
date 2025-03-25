@@ -18,17 +18,17 @@ import { Label } from "@/components/ui/shadcn/label";
 import { Button } from "@/components/ui/shadcn/button";
 
 interface ArticleFormProps {
-  onSubmit: (data: any) => void;
-  initialData?: {
-    name?: string;
-    description?: string;
-    price?: number;
-    category?: string;
-    image?: string;
-  };
+  onSubmit: (data: Record<string, unknown>) => void;
+  initialData?: Partial<{
+    name: string;
+    description: string;
+    price: number;
+    category: string;
+    image: string;
+  }>;
 }
 
-const createItem: React.FC<ArticleFormProps> = ({
+const CreateItem: React.FC<ArticleFormProps> = ({
   onSubmit,
   initialData = {},
 }) => {
@@ -60,7 +60,7 @@ const createItem: React.FC<ArticleFormProps> = ({
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="name">Nom de l'article</Label>
+            <Label htmlFor="name">Nom de l&#39;article</Label>
             <Input
               id="name"
               name="name"
@@ -133,7 +133,7 @@ const createItem: React.FC<ArticleFormProps> = ({
             />
           </div>
           <Button type="submit" className="w-full">
-            Créer l'article
+            Créer l&#39;article
           </Button>
         </form>
       </CardContent>
@@ -141,4 +141,4 @@ const createItem: React.FC<ArticleFormProps> = ({
   );
 };
 
-export default createItem;
+export default CreateItem;

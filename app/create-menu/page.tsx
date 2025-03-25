@@ -14,7 +14,7 @@ interface FormData {
 }
 
 export default function RestaurantItemForm() {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData] = useState<FormData>({
     name: "",
     description: "",
     price: 0,
@@ -22,15 +22,19 @@ export default function RestaurantItemForm() {
     image: "",
   });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Form submitted:", formData);
+  const handleSubmit = (data: Record<string, unknown>) => {
+    console.log("Form submitted:", data);
   };
 
   return (
     <div>
       <CreateItem onSubmit={handleSubmit} initialData={formData} />
-      <ListItems items={sampleDishes} />
+      <ListItems
+        items={sampleDishes.map((dish) => ({
+          ...dish,
+          id: dish.id.toString(),
+        }))}
+      />
     </div>
   );
 }

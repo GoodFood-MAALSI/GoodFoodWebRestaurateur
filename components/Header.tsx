@@ -7,6 +7,7 @@ import {
   NavigationMenuList,
   NavigationMenuLink,
 } from "@/components/ui/shadcn/navigation-menu";
+import Image from "next/image";
 
 export default function Header({ showNavbar }: { showNavbar: boolean }) {
   const router = useRouter();
@@ -18,11 +19,7 @@ export default function Header({ showNavbar }: { showNavbar: boolean }) {
           className="flex items-center space-x-2 cursor-pointer"
           onClick={() => router.push("/")}
         >
-          <img
-            src="/GoodFood/logo-textless.jpg"
-            className="align-left"
-            width={50}
-          />
+          <Image src="/GoodFood/logo-textless.jpg" alt="GoodFoodLogo" />
           <h1 className="text-xl font-bold">GoodFood</h1>
         </div>
 
