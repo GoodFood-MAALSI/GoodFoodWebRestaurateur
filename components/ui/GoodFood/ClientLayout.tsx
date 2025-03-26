@@ -15,14 +15,12 @@ export default function ClientLayout({
   const showNavbar = !hideNavbarRoutes.includes(pathname);
 
   return (
-    <>
-      <html lang="fr" className="h-full">
-        <body className="antialiased h-full flex flex-col">
-          <Header showNavbar={showNavbar} />
-          <main className="flex-grow">{children}</main>
-          <Footer />
-        </body>
-      </html>
-    </>
+    <html lang="fr" className="h-full">
+      <body className="antialiased h-full flex flex-col">
+        <Header showNavbar={showNavbar} />
+        <main className="flex-grow">{children}</main>
+        <Footer />
+      </body>
+    </html>
   );
 }

@@ -7,10 +7,10 @@ export default function NotFound() {
     <main className="min-h-screen flex flex-col items-center justify-center bg-gray-100 text-center p-6">
       <h1 className="text-6xl font-bold text-gray-800">404</h1>
       <p className="text-xl text-gray-600 mt-4">
-        Oups ! Cette page n'existe pas.
+        Oups ! Cette page n&#39;existe pas.
       </p>
       <Link href="/" passHref>
-        <Button className="mt-6">Retour à l'accueil</Button>
+        <Button className="mt-6">Retour à l&#39;accueil</Button>
       </Link>
     </main>
   );
