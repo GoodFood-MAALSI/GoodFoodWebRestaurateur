@@ -19,7 +19,12 @@ export default function Header({ showNavbar }: { showNavbar: boolean }) {
           className="flex items-center space-x-2 cursor-pointer"
           onClick={() => router.push("/")}
         >
-          <Image src="/GoodFood/logo-textless.jpg" alt="GoodFoodLogo" />
+          <Image
+            src="/GoodFood/logo-textless.jpg"
+            alt="GoodFoodLogo"
+            width={50}
+            height={50}
+          />
           <h1 className="text-xl font-bold">GoodFood</h1>
         </div>
 

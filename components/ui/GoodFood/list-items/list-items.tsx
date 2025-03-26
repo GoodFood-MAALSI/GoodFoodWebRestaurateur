@@ -1,5 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
 import React from "react";
-import Image from "next/image";
 
 interface Item {
   id: string;
@@ -50,7 +50,7 @@ const ListItems: React.FC<ListItemsProps> = ({ items }) => {
                       alignItems: "center",
                     }}
                   >
-                    <Image
+                    <img
                       src={item.imageUrl}
                       alt={item.title}
                       style={{

@@ -33,11 +33,11 @@ const CreateItem: React.FC<ArticleFormProps> = ({
   initialData = {},
 }) => {
   const [formData, setFormData] = useState({
-    name: initialData.name || "",
-    description: initialData.description || "",
-    price: initialData.price || "",
-    category: initialData.category || "",
-    image: initialData.image || "",
+    name: initialData.name ?? "",
+    description: initialData.description ?? "",
+    price: initialData.price ?? "",
+    category: initialData.category ?? "",
+    image: initialData.image ?? "",
   });
 
   const handleChange = (

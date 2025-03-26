@@ -39,7 +39,7 @@ const LandingPage: React.FC = () => {
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#B5E48C] to-[#1E6091] flex flex-col">
       <section className="flex flex-1 flex-col items-center justify-center px-4 py-12 text-center">
-        <Image src="/GoodFood/logo.png" alt="Logo" />
+        <Image src="/GoodFood/logo.png" alt="Logo" width={200} height={200} />
         <p className="text-lg text-white/80 mb-8 animate-fadeInUp">
           Développez votre activité avec notre plateforme de livraison
           tout-en-un.
