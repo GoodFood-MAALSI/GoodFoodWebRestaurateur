@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/shadcn/navigation-menu";
 import Image from "next/image";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
+
 export default function Header({ showNavbar }: { showNavbar: boolean }) {
   const router = useRouter();
 
@@ -20,7 +22,7 @@ export default function Header({ showNavbar }: { showNavbar: boolean }) {
           onClick={() => router.push("/")}
         >
           <Image
-            src="/GoodFood/logo-textless.jpg"
+            src={`${basePath}/GoodFood/logo-textless.jpg`}
             alt="GoodFoodLogo"
             width={50}
             height={50}
