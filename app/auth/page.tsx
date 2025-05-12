@@ -3,7 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { loginSchema } from "@/lib/validators/auth"
+import { NEXT_PUBLIC_API_URL } from "@/app/constants/env";
+import { loginTexts } from "@/app/auth/constants";
+import type { LoginForm } from "@/types/auth";
 
 import {
   Form,
@@ -17,21 +20,10 @@ import {
 import { Input } from "@/components/ui/shadcn/input";
 import { Button } from "@/components/ui/shadcn/button";
 
-const loginSchema = z.object({
-  email: z.string().email("Adresse email invalide"),
-  password: z
-    .string()
-    .min(6, "Le mot de passe doit contenir au moins 6 caractères"),
-});
-
-interface LoginForm {
-  email: string;
-  password: string;
-}
-
 export default function AuthPage() {
   const router = useRouter();
-  const form = useForm({
+
+  const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
@@ -39,15 +31,48 @@ export default function AuthPage() {
     },
   });
 
-  const onSubmit = (data: LoginForm) => {
-    console.log("Données de connexion:", data);
-    // Ajouter ici la logique d'authentification
+  const onSubmit = async (data: LoginForm) => {
+    try {
+      const response = await fetch(`${NEXT_PUBLIC_API_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+  let errMessage = loginTexts.error.default;
+
+  try {
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      const errorData = await response.json();
+      errMessage = errorData.message || errMessage;
+    } else {
+      const raw = await response.text();
+      console.warn("Réponse non-JSON :", raw);
+    }
+  } catch (parseErr) {
+    console.error("Erreur JSON parsing :", parseErr);
+  }
+
+  throw new Error(errMessage);
+}
+
+
+      router.push("/dashboard");
+    } catch (error: any) {
+      console.error("Erreur de connexion:", error);
+      alert(error.message);
+    }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="w-full max-w-md space-y-6 bg-white p-8 shadow-lg rounded-lg">
-        <h2 className="text-center text-2xl font-bold">Connexion</h2>
+        <h2 className="text-center text-2xl font-bold">{loginTexts.title}</h2>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -56,11 +81,11 @@ export default function AuthPage() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{loginTexts.fields.email.label}</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
-                      placeholder="Entrer votre email"
+                      placeholder={loginTexts.fields.email.placeholder}
                       {...field}
                     />
                   </FormControl>
@@ -74,11 +99,11 @@ export default function AuthPage() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mot de passe</FormLabel>
+                  <FormLabel>{loginTexts.fields.password.label}</FormLabel>
                   <FormControl>
                     <Input
                       type="password"
-                      placeholder="Entrer votre mot de passe"
+                      placeholder={loginTexts.fields.password.placeholder}
                       {...field}
                     />
                   </FormControl>
@@ -90,21 +115,21 @@ export default function AuthPage() {
             <Button
               type="submit"
               className="w-full text-white hover:opacity-90"
-              style={{ backgroundColor: "#76C893" }}
+              style={{ backgroundColor: loginTexts.colors.submit }}
             >
-              Connexion
+              {loginTexts.submitButton}
             </Button>
           </form>
         </Form>
 
         <div className="text-center">
-          <p>Pas encore de compte ?</p>
+          <p>{loginTexts.footer.prompt}</p>
           <Button
             onClick={() => router.push("/create-company")}
             className="mt-2 w-full text-white hover:opacity-90"
-            style={{ backgroundColor: "#34A0A4" }}
+            style={{ backgroundColor: loginTexts.colors.secondary }}
           >
-            Créer un restaurant
+            {loginTexts.footer.createButton}
           </Button>
         </div>
       </div>
