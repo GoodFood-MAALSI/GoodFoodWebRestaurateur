@@ -6,7 +6,10 @@ import { useRouter, useParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { defaultRestaurantValues } from "@/app/create-company/constants";
 import { API_ROUTES } from "@/app/constants";
-import { RestaurantFormValues, restaurantSchema} from "@/app/create-company/schema";
+import {
+  RestaurantFormValues,
+  restaurantSchema,
+} from "@/app/create-company/schema";
 
 import {
   Form,
@@ -54,7 +57,11 @@ export function RestaurantForm() {
         {
           method: id ? "PATCH" : "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...data, is_open: false })
+          body: JSON.stringify({
+            ...data,
+            is_open: false,
+            phone_number: Number(data.phone_number),
+          }),
         }
       );
 
@@ -89,7 +96,7 @@ export function RestaurantForm() {
               { name: "postal_code", label: "Code Postal", type: "text" },
               { name: "country", label: "Pays", type: "text" },
               { name: "email", label: "Email", type: "text" },
-              { name: "phone_number", label: "Téléphone", type: "tel" },
+              { name: "phone_number", label: "Téléphone", type: "number" },
             ].map(({ name, label, type }) => (
               <FormField
                 key={name}
@@ -107,7 +114,11 @@ export function RestaurantForm() {
               />
             ))}
 
-            <Button type="submit" className="w-full text-white" style={{ backgroundColor: "#76C893" }}>
+            <Button
+              type="submit"
+              className="w-full text-white"
+              style={{ backgroundColor: "#76C893" }}
+            >
               {id ? "Mettre à jour le restaurant" : "Créer le restaurant"}
             </Button>
           </form>
