@@ -68,10 +68,10 @@ export default function Header({ showNavbar }: { showNavbar: boolean }) {
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuLink
-                  onClick={() => router.push("/restaurant")}
+                  onClick={() => router.push("/restaurants")}
                   className="cursor-pointer"
                 >
-                  Mon Restaurant
+                  Mes Restaurants
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
