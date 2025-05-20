@@ -46,11 +46,11 @@ const LandingPage: React.FC = () => {
           Développez votre activité avec notre plateforme de livraison
           tout-en-un.
         </p>
-        <Link href="/auth" passHref>
-          <Button variant="default" size="lg">
-            Rejoignez l'expérience GoodFood
-          </Button>
-        </Link>
+        <Button asChild variant="default" size="lg">
+          <Link href="/auth">
+            Rejoignez l&apos;expérience GoodFood
+          </Link>
+        </Button>
       </section>
 
       <section className="bg-white rounded-t-3xl py-12 px-4">

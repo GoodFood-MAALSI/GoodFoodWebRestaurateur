@@ -2,10 +2,9 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import Navbar from "@/components/ui/GoodFood/navbar/navbar";
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Card, CardHeader } from "@/components/ui/shadcn/card";
+import { Button } from "@/components/ui/shadcn/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/shadcn/avatar";
 import { Plus } from "lucide-react";
 
 const mockRestaurants = [
@@ -53,7 +52,6 @@ const RestaurantListPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
       <main className="w-full max-w-[1400px] mx-auto px-6 pt-20 pb-10 space-y-8">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Mes restaurants</h1>

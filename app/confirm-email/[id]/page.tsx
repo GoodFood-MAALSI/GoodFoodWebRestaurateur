@@ -71,7 +71,7 @@ export default function ConfirmEmailPage() {
               style={{ backgroundColor: "#dc2626" }}
               onClick={() => router.push("/")}
             >
-              Retour à l'accueil
+              Retour à l&apos;accueil
             </Button>
           </>
         );

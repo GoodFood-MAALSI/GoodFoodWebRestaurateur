@@ -41,8 +41,12 @@ export function useForgotPassword(onClose?: () => void) {
         form.reset();
         setEmailSent(false);
       }, 1500);
-    } catch (error: any) {
-      toast.error(error.message || loginTexts.error.default);
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : loginTexts.error.default;
+      toast.error(message);
     }
   };
 
