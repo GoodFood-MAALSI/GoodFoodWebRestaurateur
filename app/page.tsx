@@ -46,9 +46,9 @@ const LandingPage: React.FC = () => {
           Développez votre activité avec notre plateforme de livraison
           tout-en-un.
         </p>
-        <Link href="/create-company" passHref>
+        <Link href="/auth" passHref>
           <Button variant="default" size="lg">
-            Créer un compte
+            Rejoignez l'expérience GoodFood
           </Button>
         </Link>
       </section>

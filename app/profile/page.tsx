@@ -28,6 +28,7 @@ import {
   Legend,
 } from "recharts";
 import ProfileSetupSteps from "@/components/ui/GoodFood/progression-steps/progression-steps";
+import LogoutSection from "@/components/ui/GoodFood/logout/Logout";
 
 const customersServedData = [
   { date: "03/10", Clients: 80 },
@@ -57,7 +58,6 @@ interface ProfileData {
   phone: string;
 }
 
-// Profile Card Component
 const ProfileCard: React.FC = () => {
   const [profile, setProfile] = useState<ProfileData>({
     restaurantName: "Le Gourmet Express",
@@ -159,6 +159,7 @@ const ProfileCard: React.FC = () => {
           <Button variant="outline" onClick={() => setIsEditing(true)}>
             Mettre à jour les coordonnées
           </Button>
+          <LogoutSection />
         </CardFooter>
       )}
     </Card>
