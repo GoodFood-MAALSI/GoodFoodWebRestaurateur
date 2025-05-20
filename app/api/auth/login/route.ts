@@ -17,19 +17,19 @@ export async function POST(req: Request) {
   const { token, refreshToken, tokenExpires, user } = await res.json();
 
   const cookieStore = cookies();
-  cookieStore.set("token", token, {
+  (await cookieStore).set("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
   });
-  cookieStore.set("refreshToken", refreshToken, {
+  (await cookieStore).set("refreshToken", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
   });
-  cookieStore.set("tokenExpires", tokenExpires.toString(), {
+  (await cookieStore).set("tokenExpires", tokenExpires.toString(), {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

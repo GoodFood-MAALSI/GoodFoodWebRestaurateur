@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/shadcn/card";
+import { Card, CardHeader } from "@/components/ui/shadcn/card";
 import { Button } from "@/components/ui/shadcn/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/shadcn/avatar";
 import { Plus } from "lucide-react";

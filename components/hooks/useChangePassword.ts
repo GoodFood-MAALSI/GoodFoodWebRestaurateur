@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams, useParams, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { changePasswordSchema } from "@/lib/validators/auth";
@@ -41,8 +41,10 @@ export function useChangePassword() {
 
       toast.success("Mot de passe réinitialisé !");
       router.push("/auth");
-    } catch (error: any) {
-      toast.error(error.message || "Une erreur est survenue.");
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Une erreur est survenue.";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

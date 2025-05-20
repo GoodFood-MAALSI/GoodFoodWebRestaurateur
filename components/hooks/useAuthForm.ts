@@ -76,9 +76,13 @@ export function useAuthForm() {
           window.location.href = "/create-company";
         }, 300);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erreur de connexion:", error);
-      alert(error.message || loginTexts.error.default);
+      if (error && typeof error === "object" && "message" in error) {
+        alert((error as { message: string }).message || loginTexts.error.default);
+      } else {
+        alert(loginTexts.error.default);
+      }
     }
   };
 

@@ -109,7 +109,7 @@ export function RestaurantForm() {
 
       alert(id ? "Restaurant mis à jour" : "Restaurant créé avec succès");
       router.push("/profile");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Erreur :", err);
       alert("Une erreur est survenue.");
     }
