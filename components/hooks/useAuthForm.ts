@@ -3,13 +3,12 @@
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { setCookie } from "cookies-next";
 import { toast } from "sonner";
 
 import { loginSchema } from "@/lib/validators/auth";
 import { loginTexts } from "@/app/auth/constants";
 import type { LoginForm } from "@/types/auth";
-import { NEXT_PUBLIC_API_URL } from "@/app/constants";
+import type { LoginResponse } from "@/types/api";
 
 export function useAuthForm() {
   const router = useRouter();
@@ -24,12 +23,13 @@ export function useAuthForm() {
 
   const onSubmit = async (data: LoginForm) => {
     try {
-      const response = await fetch(`${NEXT_PUBLIC_API_URL}/auth/login`, {
+      const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -37,44 +37,28 @@ export function useAuthForm() {
         throw new Error(errorData.message || loginTexts.error.default);
       }
 
-      const { token, user } = await response.json();
+      const { user } = (await response.json()) as LoginResponse;
 
-      setCookie("token", token, {
-        maxAge: 60 * 60 * 24, //1 jour
-        path: "/",
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-        httpOnly: true,
+      const restaurantsRes = await fetch(`/api/proxy/restaurant/me`, {
+        method: "GET",
+        credentials: "include",
       });
-
-      const restaurantsRes = await fetch(
-        `${NEXT_PUBLIC_API_URL}/users/${user.id}/restaurants`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
       if (!restaurantsRes.ok) {
-        throw new Error(
-          "Impossible de récupérer les restaurants de l'utilisateur."
-        );
+        throw new Error("Impossible de récupérer les restaurants.");
       }
 
-      const restaurants = await restaurantsRes.json();
+      const restaurantsJson = await restaurantsRes.json();
+      const restaurantsList = restaurantsJson.data?.restaurants;
+      if (!Array.isArray(restaurantsList)) {
+        console.warn("Réponse inattendue : restaurants n'est pas un tableau.", restaurantsJson);
+        throw new Error("Réponse inattendue du serveur.");
+      }
 
-      if (Array.isArray(restaurants) && restaurants.length > 0) {
+      if (restaurantsList.length > 0) {
         router.push("/profile");
       } else {
-        toast.success(
-          "Bienvenue sur la plateforme ! Veuillez créer votre entreprise."
-        );
-
-        setTimeout(() => {
-          window.location.href = "/create-company";
-        }, 300);
+        toast.success("Bienvenue sur la plateforme ! Veuillez créer votre entreprise.");
+        router.push("/create-company");
       }
     } catch (error: unknown) {
       console.error("Erreur de connexion:", error);
