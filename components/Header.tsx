@@ -73,13 +73,20 @@ export default function Header({ showNavbar }: { showNavbar: boolean }) {
                 >
                   Mes Restaurants
                 </NavigationMenuLink>
+              </NavigationMenuItem>              <NavigationMenuItem>
+                <NavigationMenuLink
+                  onClick={() => router.push("/orders")}
+                  className="cursor-pointer"
+                >
+                  Commandes
+                </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuLink
-                  onClick={() => router.push("/create-menu")}
+                  onClick={() => router.push("/ratings")}
                   className="cursor-pointer"
                 >
-                  Gérer le menu
+                  Ratings
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
