@@ -26,8 +26,4 @@ export const loginTexts = {
     success: "Un lien de réinitialisation a été envoyé à votre adresse e-mail.",
   },
 },
-  colors: {
-    submit: "#1D4ED8",
-    secondary: "#6B7280",
-  },
 };

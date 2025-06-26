@@ -5,6 +5,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/shadcn/input";
 import { Button } from "@/components/ui/shadcn/button";
 import { loginTexts } from "@/app/auth/constants";
+import { colors } from "@/app/constants";
 import { ForgotPasswordModal } from "@/components/forms/forgotPasswordModal";
 
 export default function AuthForm() {
@@ -53,7 +54,7 @@ export default function AuthForm() {
           <Button
             type="submit"
             className="w-full text-white hover:opacity-90"
-            style={{ backgroundColor: loginTexts.colors.submit }}
+            style={{ backgroundColor: colors.submit }}
           >
             {loginTexts.submitButton}
           </Button>
@@ -66,7 +67,7 @@ export default function AuthForm() {
         <Button
           onClick={() => router.push("/create-company")}
           className="mt-2 w-full text-white hover:opacity-90"
-          style={{ backgroundColor: loginTexts.colors.secondary }}
+          style={{ backgroundColor: colors.secondary }}
         >
           {loginTexts.footer.createButton}
         </Button>
