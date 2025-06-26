@@ -9,12 +9,7 @@ export async function middleware(req: NextRequest) {
   const lastCheck = req.cookies.get('lastRefreshCheck')?.value
 
   if (!token || !refreshToken || !tokenExpires) {
-    console.log("Cookies middleware:", {
-  token,
-  refreshToken,
-  tokenExpires,
-});
-
+    console.log("Cookies middleware missing:", { token, refreshToken, tokenExpires })
     return NextResponse.redirect(new URL('/auth', req.url))
   }
 
@@ -25,9 +20,15 @@ export async function middleware(req: NextRequest) {
   }
 
   const tokenExp = parseInt(tokenExpires)
-  const lifetime = tokenExp - getIatFromJWT(token) * 1000
-  const remaining = tokenExp - now
+  const iat = getIatFromJWT(token)
 
+  if (!iat || isNaN(tokenExp)) {
+    console.warn('Invalid token timestamps')
+    return NextResponse.redirect(new URL('/auth', req.url))
+  }
+
+  const lifetime = tokenExp - iat * 1000
+  const remaining = tokenExp - now
   const threshold = lifetime * 0.1
 
   const res = NextResponse.next()
@@ -38,22 +39,28 @@ export async function middleware(req: NextRequest) {
   })
 
   if (remaining < threshold) {
-    const refresh = await fetch('http://localhost:8080/restaurateur/api/auth/refresh', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${refreshToken}`,
-        Accept: '*/*',
-      },
-    })
+    try {
+      const refresh = await fetch('http://localhost:8080/restaurateur/api/auth/refresh', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+          Accept: '*/*',
+        },
+      })
 
-    if (!refresh.ok) {
+      if (!refresh.ok) {
+        console.warn('Token refresh failed')
+        return NextResponse.redirect(new URL('/auth', req.url))
+      }
+
+      const { token: newToken, tokenExpires: newExp } = await refresh.json()
+
+      res.cookies.set('token', newToken, { httpOnly: true, path: '/' })
+      res.cookies.set('tokenExpires', newExp.toString(), { httpOnly: true, path: '/' })
+    } catch (e) {
+      console.error('Refresh error:', e)
       return NextResponse.redirect(new URL('/auth', req.url))
     }
-
-    const { token: newToken, tokenExpires: newExp } = await refresh.json()
-
-    res.cookies.set('token', newToken, { httpOnly: true, path: '/' })
-    res.cookies.set('tokenExpires', newExp.toString(), { httpOnly: true, path: '/' })
   }
 
   return res
@@ -61,7 +68,7 @@ export async function middleware(req: NextRequest) {
 
 function getIatFromJWT(token: string): number {
   try {
-    const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString())
+    const payload = JSON.parse(atob(token.split('.')[1]))
     return payload.iat
   } catch {
     return 0
@@ -70,7 +77,6 @@ function getIatFromJWT(token: string): number {
 
 export const config = {
   matcher: [
-    '/(confirm-email|create-company|create-menu|profile|restaurants)/:path*',
+    '/(create-company|create-menu|profile|restaurants)/:path*',
   ],
 }
-
