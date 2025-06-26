@@ -12,6 +12,8 @@ export const defaultRestaurantValues: RestaurantFormValues = {
   country: "France",
   email: "restaurant@exemple.com",
   phone_number: "0700000000",
+  siret: "12345678901234",
+  is_open: false,
 };
 
 export const restaurantFormFields = [
