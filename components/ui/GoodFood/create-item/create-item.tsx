@@ -16,29 +16,30 @@ import {
 } from "@/components/ui/shadcn/select";
 import { Label } from "@/components/ui/shadcn/label";
 import { Button } from "@/components/ui/shadcn/button";
+import { MenuItem } from "@/types/menu/menuItem";
 
 interface ArticleFormProps {
-  onSubmit: (data: Record<string, unknown>) => void;
-  initialData?: Partial<{
-    name: string;
-    description: string;
-    price: number;
-    category: string;
-    image: string;
-  }>;
+  onSubmit: (data: MenuItem) => void;
+    initialData?: Partial<MenuItem>;
+
 }
 
 const CreateItem: React.FC<ArticleFormProps> = ({
   onSubmit,
   initialData = {},
 }) => {
-  const [formData, setFormData] = useState({
-    name: initialData.name ?? "",
-    description: initialData.description ?? "",
-    price: initialData.price ?? "",
-    category: initialData.category ?? "",
-    image: initialData.image ?? "",
-  });
+  const [formData, setFormData] = useState<MenuItem>({
+  id: initialData.id ?? 0,
+  name: initialData.name ?? "",
+  description: initialData.description ?? "",
+  price: initialData.price ?? "",
+  menuCategoryId: initialData.menuCategoryId ?? 0,
+  picture: initialData.picture ?? "",
+  promotion: initialData.promotion ?? "",
+  is_available: initialData.is_available ?? true,
+  position: initialData.position ?? 0,
+  menuItemOptions: initialData.menuItemOptions ?? [],
+});
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -73,7 +74,7 @@ const CreateItem: React.FC<ArticleFormProps> = ({
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
-              name="description"
+              name="desc"
               value={formData.description}
               onChange={handleChange}
               required
@@ -92,11 +93,12 @@ const CreateItem: React.FC<ArticleFormProps> = ({
             />
           </div>
           <div>
-            <Label htmlFor="category">Catégorie</Label>
+            <Label htmlFor="cat">Catégorie</Label>
             <Select
-              value={formData.category}
+              value={formData.menuCategoryId.toString()}
+              name="cat"
               onValueChange={(value: string) =>
-                setFormData((prev) => ({ ...prev, category: value }))
+                setFormData((prev) => ({ ...prev, menuCategoryId: Number(value) }))
               }
             >
               <SelectTrigger>
