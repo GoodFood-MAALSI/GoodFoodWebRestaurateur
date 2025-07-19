@@ -22,7 +22,7 @@ export async function loadMenuItems(restaurantId: string) {
     const json = await res.json();
     const items = json.data || json;
     return { items };
-  } catch (err) {
+  } catch {
     return { items: [], error: "Échec chargement des articles" };
   }
 }

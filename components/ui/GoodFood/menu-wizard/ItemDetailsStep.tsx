@@ -32,9 +32,9 @@ export default function ItemDetailsStep({ initial, onBack, onNext }: ItemDetails
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Étape 2: Détails de l'article</h3>
+      <h3 className="text-lg font-semibold">Étape 2: Détails de l&apos;article</h3>
       <Input
-        placeholder="Nom de l'article"
+        placeholder="Nom de l&apos;article"
         value={name}
         onChange={e => setName(e.target.value)}
       />

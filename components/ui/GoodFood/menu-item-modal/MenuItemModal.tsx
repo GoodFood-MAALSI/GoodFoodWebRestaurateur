@@ -23,7 +23,6 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
   const [activeTab, setActiveTab] = useState("item");
   const [editingItem, setEditingItem] = useState(item);
   const [editingOption, setEditingOption] = useState<MenuItemOption | null>(null);
-  const [editingValue, setEditingValue] = useState<MenuItemOptionValue | null>(null);
   const [newOption, setNewOption] = useState<Partial<MenuItemOption>>({});
   const [newValues, setNewValues] = useState<Record<number, Partial<MenuItemOptionValue>>>({});
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -383,9 +382,9 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
         }}
       >
         <DialogHeader>
-          <DialogTitle>Gestion de l'article - {item.name}</DialogTitle>
+          <DialogTitle>Gestion de l&apos;article - {item.name}</DialogTitle>
           <DialogDescription>
-            Gérez les détails de l'article, ses options et ses valeurs d'options. Utilisez les onglets pour naviguer entre les différentes sections.
+            Gérez les détails de l&apos;article, ses options et ses valeurs d&apos;options. Utilisez les onglets pour naviguer entre les différentes sections.
           </DialogDescription>
         </DialogHeader>
 
@@ -432,7 +431,7 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                     <span className="text-white font-bold text-lg">📄</span>
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900">Informations de l'article</h2>
+                    <h2 className="text-xl font-bold text-gray-900">Informations de l&apos;article</h2>
                     <p className="text-sm text-gray-600">Modifiez les détails de votre article de menu</p>
                   </div>
                 </div>
@@ -446,7 +445,7 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <Label htmlFor="name" className="text-sm font-medium text-gray-700 mb-2 block">
-                      Nom de l'article *
+                      Nom de l&apos;article *
                     </Label>
                     <Input
                       id="name"
@@ -600,11 +599,11 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                     className="flex items-center justify-center"
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
-                    Supprimer l'article
+                    Supprimer l&apos;article
                   </Button>
                 </div>
                 <p className="text-xs text-gray-500 mt-3 text-center">
-                  ⚠️ La suppression de l'article est définitive et supprimera aussi toutes ses options et valeurs
+                  ⚠️ La suppression de l&apos;article est définitive et supprimera aussi toutes ses options et valeurs
                 </p>
               </div>
             </div>
@@ -616,7 +615,7 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                 <h3 className="font-semibold text-green-800 mb-4">Créer une nouvelle option</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="newOptionName" className="text-sm font-medium text-gray-700">Nom de l'option *</Label>
+                    <Label htmlFor="newOptionName" className="text-sm font-medium text-gray-700">Nom de l&apos;option *</Label>
                     <Input
                       id="newOptionName"
                       value={newOption.name || ""}
@@ -663,7 +662,7 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                     style={{ backgroundColor: COLORS.success, color: COLORS.text.inverse }}
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    Créer l'option
+                    Créer l&apos;option
                   </Button>
                 </div>
               </div>
@@ -676,7 +675,7 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                       <div key={option.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                         {editingOption?.id === option.id ? (
                           <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-                            <h4 className="font-medium text-yellow-800 mb-3">Modification de l'option</h4>
+                            <h4 className="font-medium text-yellow-800 mb-3">Modification de l&apos;option</h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div>
                                 <Label className="text-sm font-medium text-gray-700">Nom</Label>
@@ -889,7 +888,7 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                 <div className="text-center py-12 text-gray-500">
                   <div className="text-6xl mb-4">⚙️</div>
                   <h3 className="text-xl font-semibold mb-2">Aucune option disponible</h3>
-                  <p>Créez d'abord des options dans l'onglet "Options" pour pouvoir ajouter des valeurs.</p>
+                  <p>Créez d&apos;abord des options dans l&apos;onglet &quot;Options&quot; pour pouvoir ajouter des valeurs.</p>
                 </div>
               )}
             </div>
@@ -902,7 +901,7 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                 <div className="bg-white rounded-xl border border-gray-200 p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                     <ImageIcon className="w-5 h-5 mr-2" />
-                    Image de l'article
+                    Image de l&apos;article
                   </h3>
                   
                   <div className="mb-4">
@@ -954,7 +953,7 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                         </div>
                         {isDraggingFile && (
                           <div className="absolute inset-0 bg-blue-500 bg-opacity-20 rounded-lg flex items-center justify-center border-2 border-dashed border-blue-500">
-                            <p className="text-blue-700 font-medium">Déposez l'image ici</p>
+                            <p className="text-blue-700 font-medium">Déposez l&apos;image ici</p>
                           </div>
                         )}
                       </div>
@@ -1000,7 +999,7 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                   {isLocalImagePreview && !isUploadingImage && (
                     <div className="flex items-center justify-center p-2 bg-yellow-50 rounded-lg text-yellow-700 text-sm mb-2">
                       <span className="text-yellow-600 mr-2">⚠️</span>
-                      Aperçu local - L'image sera sauvegardée lors de la validation
+                      Aperçu local - L&apos;image sera sauvegardée lors de la validation
                     </div>
                   )}
 

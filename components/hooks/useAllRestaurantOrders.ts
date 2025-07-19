@@ -3,7 +3,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { Order, OrderStatusType } from "@/types/order";
 import { useRestaurants } from "./useRestaurants";
-import { useOrders } from "./useOrders";
 
 interface RestaurantWithOrders {
   restaurant: {
@@ -58,13 +57,13 @@ export function useAllRestaurantOrders(userId: number) {
             loading: false,
             error: null,
           };
-        } catch (err: any) {
+        } catch (err: unknown) {
           console.error(`Error fetching orders for restaurant ${restaurant.id}:`, err);
           return {
             restaurant,
             orders: [],
             loading: false,
-            error: err.message || "Erreur de chargement",
+            error: err instanceof Error ? err.message : "Erreur de chargement",
           };
         }
       });
@@ -81,8 +80,8 @@ export function useAllRestaurantOrders(userId: number) {
 
       setRestaurantOrders(ordersMap);
       setAllOrders(combinedOrders);
-    } catch (err: any) {
-      setError(err.message || "Erreur lors du chargement des commandes");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Erreur lors du chargement des commandes");
     } finally {
       setLoading(false);
     }
@@ -153,9 +152,9 @@ export function useAllRestaurantOrders(userId: number) {
       setAllOrders(prev => prev.map(order => 
         order.id === orderId ? { ...order, ...updatedOrder } : order
       ));
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error in updateOrderStatus:", err);
-      throw new Error(err.message || "Erreur lors de la mise à jour");
+      throw new Error(err instanceof Error ? err.message : "Erreur lors de la mise à jour");
     }
   }, [restaurantOrders]);
 

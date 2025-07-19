@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/shadcn/card";
 import { Button } from "@/components/ui/shadcn/button";
 import {
   Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter
@@ -34,7 +33,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
   const [loading, setLoading] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isLocalImagePreview, setIsLocalImagePreview] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<RestaurantFormValues>({
@@ -75,7 +73,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
       if (imageUrl) {
         const fullImagePath = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`;
         setImagePreview(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080'}/restaurateur/api${fullImagePath}`);
-        setIsLocalImagePreview(false);
         toast.success("Image téléchargée avec succès");
         window.location.reload();
       } else {
@@ -108,7 +105,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
     reader.onload = (e) => {
       const result = e.target?.result as string;
       setImagePreview(result);
-      setIsLocalImagePreview(true);
     };
     reader.onerror = () => {
       toast.error('Erreur lors de la lecture du fichier');
@@ -299,7 +295,7 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
                     >
                       <Upload className="w-8 h-8 text-gray-400 mb-2" />
                       <p className="text-sm text-gray-600">Cliquez pour ajouter une photo</p>
-                      <p className="text-xs text-gray-400">PNG, JPG jusqu'à 5MB</p>
+                      <p className="text-xs text-gray-400">PNG, JPG jusqu&apos;à 5MB</p>
                     </div>
                   )}
                 </div>

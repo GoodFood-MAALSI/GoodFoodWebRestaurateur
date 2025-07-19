@@ -261,7 +261,7 @@ export default function RestaurantPage() {
                 <TrendingUp className="w-6 h-6" style={{ color: COLORS.success }} />
               </div>
               <div>
-                <h3 className="text-sm font-medium text-gray-500">Chiffre d'affaires</h3>
+                <h3 className="text-sm font-medium text-gray-500">Chiffre d&apos;affaires</h3>
                 <p className="text-xl font-bold" style={{ color: COLORS.text.primary }}>
                   €{(Math.random() * 10000 + 5000).toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
                 </p>

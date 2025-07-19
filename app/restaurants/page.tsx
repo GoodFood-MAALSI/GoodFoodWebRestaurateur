@@ -27,7 +27,7 @@ const RestaurantListPage = () => {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-4xl font-bold text-gray-900 mb-2">{TEXTS.pageTitle}</h1>
-              <p className="text-gray-600">Gérez et visualisez tous vos restaurants en un coup d'œil</p>
+              <p className="text-gray-600">Gérez et visualisez tous vos restaurants en un coup d&apos;œil</p>
             </div>
             <Button 
               onClick={handleCreateRestaurant} 

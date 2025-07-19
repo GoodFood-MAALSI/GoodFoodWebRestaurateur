@@ -26,7 +26,7 @@ export function useAddressAutocomplete() {
         throw new Error(data.error);
       }
 
-      setSuggestions(data.features?.map((feature: any) => feature.properties.label) || []);
+      setSuggestions(data.features?.map((feature: { properties: { label: string } }) => feature.properties.label) || []);
     } catch (e) {
       console.error("Address suggestions error:", e);
       setSuggestions([]);

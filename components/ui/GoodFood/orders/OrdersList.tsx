@@ -44,9 +44,9 @@ export default function OrdersList({
     setSelectedOrder(updatedOrder);
   };
 
-  const getStatusString = (status: any): string => {
-    if (typeof status === 'object' && status.name) {
-      return status.name.toLowerCase();
+  const getStatusString = (status: unknown): string => {
+    if (typeof status === 'object' && status !== null && 'name' in status) {
+      return String((status as { name: string }).name).toLowerCase();
     }
     return String(status).toLowerCase();
   };

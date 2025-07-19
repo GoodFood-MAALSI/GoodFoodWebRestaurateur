@@ -11,7 +11,6 @@ import {
   Star, 
   Users, 
   TrendingUp,
-  CheckCircle,
   ArrowRight,
   Sparkles
 } from "lucide-react";

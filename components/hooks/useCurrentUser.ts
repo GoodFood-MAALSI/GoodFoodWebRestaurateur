@@ -19,11 +19,6 @@ interface RestaurantOwner {
   __entity: "User";
 }
 
-interface RestaurantMeResponse {
-  user: RestaurantOwner;
-  restaurants: Restaurant[];
-}
-
 export function useCurrentUser() {
   const [user, setUser] = useState<RestaurantOwner | null>(null);
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
@@ -85,10 +80,16 @@ export function useCurrentUser() {
         }
 
         const processedRestaurants = Array.isArray(restaurantList) ? 
-          restaurantList.map((r: any) => ({
+          restaurantList.map((r: {
+            id: number;
+            name: string;
+            description?: string;
+            image?: string;
+            is_open?: boolean;
+          }) => ({
             id: r.id,
             name: r.name,
-            description: r.description,
+            description: r.description || '',
             image: r.image ?? undefined,
             is_open: r.is_open ?? false,
           })) : [];

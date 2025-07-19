@@ -8,7 +8,6 @@ import { toast } from "sonner";
 import { loginSchema } from "@/lib/validators/auth";
 import { loginTexts } from "@/app/auth/constants";
 import type { LoginForm } from "@/types/auth";
-import type { LoginResponse } from "@/types/api";
 
 export function useAuthForm() {
   const router = useRouter();
@@ -41,7 +40,7 @@ export function useAuthForm() {
         throw new Error(errorData.message || loginTexts.error.default);
       }
 
-      const { user } = (await response.json()) as LoginResponse;
+      await response.json();
 
       const restaurantsRes = await fetch(`/api/proxy/restaurant/me`, {
         method: "GET",

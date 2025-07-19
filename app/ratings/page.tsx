@@ -18,7 +18,7 @@ import {
 } from 'lucide-react'; 
 
 export default function RatingsPage() {
-  const { user, restaurants, loading: userLoading } = useCurrentUser();
+  const { restaurants, loading: userLoading } = useCurrentUser();
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<number | null>(null);
 
   const currentRestaurantId = selectedRestaurantId || (restaurants && restaurants.length > 0 ? restaurants[0].id : null);
@@ -53,8 +53,6 @@ export default function RatingsPage() {
   };
 
   const RatingDistribution = () => {
-    const maxCount = Math.max(...Object.values(stats.ratingDistribution));
-    
     return (
       <div className="space-y-2">
         {[5, 4, 3, 2, 1].map((rating) => {
@@ -95,7 +93,7 @@ export default function RatingsPage() {
           <div className="text-center">
             <MessageSquare className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Aucun restaurant trouvé</h1>
-            <p className="text-gray-600">Vous devez d'abord créer un restaurant pour gérer les avis.</p>
+            <p className="text-gray-600">Vous devez d&apos;abord créer un restaurant pour gérer les avis.</p>
           </div>
         </div>
       </div>

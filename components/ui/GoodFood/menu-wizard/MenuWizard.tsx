@@ -17,9 +17,13 @@ interface MenuWizardProps {
 export default function MenuWizard({ restaurantId, onFinish }: MenuWizardProps) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [category, setCategory] = useState<any>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [details, setDetails] = useState<any>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [options, setOptions] = useState<any[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [values, setValues] = useState<any[][]>([]);
 
   const next = () => setStep(s => s + 1);
@@ -75,7 +79,7 @@ export default function MenuWizard({ restaurantId, onFinish }: MenuWizardProps) 
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Création d'article</DialogTitle>
+          <DialogTitle>Création d&apos;article</DialogTitle>
           <DialogDescription>
             Créez un nouvel article pour votre menu en suivant les étapes guidées.
           </DialogDescription>

@@ -24,7 +24,7 @@ export default function OptionStep({ initial = [], onBack, onNext }: OptionStepP
     setOptions(prev => [...prev, { id: crypto.randomUUID(), name: "", is_required: false, is_multiple_choice: false, position: prev.length + 1 }]);
   };
 
-  const updateOption = (idx: number, key: keyof OptionConfig, value: any) => {
+  const updateOption = (idx: number, key: keyof OptionConfig, value: unknown) => {
     setOptions(prev => prev.map((o,i) => i === idx ? { ...o, [key]: value } : o));
     crypto.randomUUID()
   };

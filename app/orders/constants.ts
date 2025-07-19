@@ -1,5 +1,3 @@
-import { COLORS } from "@/app/constants";
-
 export const ORDER_STATUS_LABELS = {
   pending: "En attente",
   accepted: "Acceptée",
