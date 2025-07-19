@@ -14,11 +14,22 @@ export function useAddressAutocomplete() {
 
     try {
       setLoading(true);
-      const res = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}`);
+      const res = await fetch(`/api/proxy/address/search?q=${encodeURIComponent(query)}`);
+      
+      if (!res.ok) {
+        throw new Error(`API request failed: ${res.status} ${res.statusText}`);
+      }
+      
       const data = await res.json();
 
-      setSuggestions(data.features.map((feature: any) => feature.properties.label));
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      setSuggestions(data.features?.map((feature: any) => feature.properties.label) || []);
     } catch (e) {
+      console.error("Address suggestions error:", e);
+      setSuggestions([]);
     } finally {
       setLoading(false);
     }
@@ -26,10 +37,21 @@ export function useAddressAutocomplete() {
 
   const fetchGeocode = async (query: string): Promise<GeocodingResult | null> => {
     try {
-      const res = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=1`);
+      const res = await fetch(`/api/proxy/address/search?q=${encodeURIComponent(query)}&limit=1`);
+      
+      if (!res.ok) {
+        throw new Error(`API request failed: ${res.status} ${res.statusText}`);
+      }
+      
       const data = await res.json();
-      const feature = data.features[0];
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
+      const feature = data.features?.[0];
       if (!feature) return null;
+      
       const [lon, lat] = feature.geometry.coordinates;
       const props = feature.properties;
 
@@ -45,7 +67,8 @@ export function useAddressAutocomplete() {
         postal_code: props.postcode || "",
         country: "France",
       };
-    } catch {
+    } catch (error) {
+      console.error("Geocoding error:", error);
       return null;
     }
   };

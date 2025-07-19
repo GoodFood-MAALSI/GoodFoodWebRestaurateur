@@ -34,6 +34,10 @@ export function useAuthForm() {
 
       if (!response.ok) {
         const errorData = await response.json();
+        if (response.status === 401) {
+          toast.error("Identifiants incorrects. Veuillez vérifier votre email et mot de passe.");
+          return;
+        }
         throw new Error(errorData.message || loginTexts.error.default);
       }
 
@@ -63,9 +67,9 @@ export function useAuthForm() {
     } catch (error: unknown) {
       console.error("Erreur de connexion:", error);
       if (error && typeof error === "object" && "message" in error) {
-        alert((error as { message: string }).message || loginTexts.error.default);
+        toast.error((error as { message: string }).message || loginTexts.error.default);
       } else {
-        alert(loginTexts.error.default);
+        toast.error(loginTexts.error.default);
       }
     }
   };

@@ -2,6 +2,7 @@ import { MenuItem } from "@/types/menu/menuItem";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { Button } from "@/components/ui/shadcn/button";
+import { COLORS } from "@/app/constants";
 
 interface EditItemFormProps {
   item: MenuItem;
@@ -96,7 +97,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ item, onSuccess }) => {
           {...register("name", { required: true })}
           className="w-full border border-gray-300 p-2 rounded"
         />
-        {errors.name && <p className="text-sm text-red-500">Nom requis</p>}
+        {errors.name && <p className="text-sm" style={{ color: COLORS.error }}>Nom requis</p>}
       </div>
 
       <div>
@@ -107,7 +108,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ item, onSuccess }) => {
           {...register("price", { required: true, valueAsNumber: true })}
           className="w-full border border-gray-300 p-2 rounded"
         />
-        {errors.price && <p className="text-sm text-red-500">Prix requis</p>}
+        {errors.price && <p className="text-sm" style={{ color: COLORS.error }}>Prix requis</p>}
       </div>
 
       <div>
@@ -128,6 +129,11 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ item, onSuccess }) => {
             src={item.picture}
             alt="Aperçu"
             className="w-32 h-32 object-cover rounded"
+            style={{
+              width: '128px',
+              height: '128px',
+              objectFit: 'cover'
+            }}
           />
           <Button
             variant="destructive"
@@ -139,7 +145,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ item, onSuccess }) => {
         </div>
       )}
 
-      {errorMessage && <p className="text-sm text-red-500">{errorMessage}</p>}
+      {errorMessage && <p className="text-sm" style={{ color: COLORS.error }}>{errorMessage}</p>}
 
       <div className="flex justify-end pt-2">
         <Button type="submit" disabled={isSubmitting}>

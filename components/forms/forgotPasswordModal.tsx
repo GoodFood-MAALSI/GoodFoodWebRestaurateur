@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/shadcn/form";
 import { useForgotPassword } from "@/components/hooks/useForgotPassword";
 import { loginTexts } from "@/app/auth/constants";
+import { COLORS } from "@/app/constants";
 
 export function ForgotPasswordModal() {
   const [open, setOpen] = useState(false);
@@ -31,7 +32,8 @@ export function ForgotPasswordModal() {
       <DialogTrigger asChild>
         <button
           type="button"
-          className="text-sm text-blue-600 underline"
+          className="text-sm underline"
+          style={{ color: COLORS.info }}
         >
           {loginTexts.forgotPassword.button}
         </button>
@@ -45,7 +47,7 @@ export function ForgotPasswordModal() {
         </DialogHeader>
 
         {emailSent ? (
-          <p className="text-green-600 mt-4">
+          <p style={{ color: COLORS.success }} className="mt-4">
             {loginTexts.forgotPassword.modal.success}
           </p>
         ) : (
@@ -68,7 +70,11 @@ export function ForgotPasswordModal() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full bg-blue-600 text-white hover:bg-blue-700">
+              <Button 
+                type="submit" 
+                className="w-full text-white"
+                style={{ backgroundColor: COLORS.secondary }}
+              >
                 {loginTexts.forgotPassword.modal.confirmButton}
               </Button>
             </form>

@@ -13,6 +13,7 @@ export const defaultRestaurantValues: RestaurantFormValues = {
   email: "restaurant@exemple.com",
   phone_number: "0700000000",
   siret: "12345678901234",
+  restaurantTypeId: "",
   is_open: false,
 };
 

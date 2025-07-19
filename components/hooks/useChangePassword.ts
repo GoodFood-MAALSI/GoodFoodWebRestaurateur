@@ -7,7 +7,6 @@ import { changePasswordSchema } from "@/lib/validators/auth";
 import type { ChangePasswordForm } from "@/types/auth";
 import { toast } from "sonner";
 import { useState } from "react";
-import { NEXT_PUBLIC_API_URL } from "@/app/constants";
 
 export function useChangePassword() {
   const { hash } = useParams();
@@ -28,7 +27,7 @@ export function useChangePassword() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${NEXT_PUBLIC_API_URL}/auth/reset-password`, {
+      const response = await fetch(`/api/auth/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: data.password, hash }),

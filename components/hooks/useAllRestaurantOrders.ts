@@ -1,0 +1,171 @@
+"use client";
+
+import { useState, useCallback, useEffect } from "react";
+import { Order, OrderStatusType } from "@/types/order";
+import { useRestaurants } from "./useRestaurants";
+import { useOrders } from "./useOrders";
+
+interface RestaurantWithOrders {
+  restaurant: {
+    id: number;
+    name: string;
+    description: string;
+    image?: string;
+  };
+  orders: Order[];
+  loading: boolean;
+  error: string | null;
+}
+
+export function useAllRestaurantOrders(userId: number) {
+  const { restaurants, loading: restaurantsLoading, error: restaurantsError } = useRestaurants(userId);
+  const [restaurantOrders, setRestaurantOrders] = useState<Record<number, RestaurantWithOrders>>({});
+  const [allOrders, setAllOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchAllOrders = useCallback(async () => {
+    if (restaurants.length === 0) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const ordersPromises = restaurants.map(async (restaurant) => {
+        try {
+          const res = await fetch(`/api/proxy/restaurant/${restaurant.id}/orders`, {
+            credentials: "include",
+          });
+
+          if (!res.ok) {
+            throw new Error(`Erreur pour le restaurant ${restaurant.name}`);
+          }
+
+          const json = await res.json();
+          
+          let ordersData;
+          if (json.data && json.data.orders) {
+            ordersData = json.data.orders;
+          } else if (json.data) {
+            ordersData = Array.isArray(json.data) ? json.data : [json.data];
+          } else {
+            ordersData = Array.isArray(json) ? json : [json];
+          }
+
+          return {
+            restaurant,
+            orders: ordersData,
+            loading: false,
+            error: null,
+          };
+        } catch (err: any) {
+          console.error(`Error fetching orders for restaurant ${restaurant.id}:`, err);
+          return {
+            restaurant,
+            orders: [],
+            loading: false,
+            error: err.message || "Erreur de chargement",
+          };
+        }
+      });
+
+      const results = await Promise.all(ordersPromises);
+      
+      const ordersMap: Record<number, RestaurantWithOrders> = {};
+      const combinedOrders: Order[] = [];
+      
+      results.forEach((result) => {
+        ordersMap[result.restaurant.id] = result;
+        combinedOrders.push(...result.orders);
+      });
+
+      setRestaurantOrders(ordersMap);
+      setAllOrders(combinedOrders);
+    } catch (err: any) {
+      setError(err.message || "Erreur lors du chargement des commandes");
+    } finally {
+      setLoading(false);
+    }
+  }, [restaurants]);
+
+  useEffect(() => {
+    if (!restaurantsLoading && restaurants.length > 0) {
+      fetchAllOrders();
+    } else if (!restaurantsLoading && restaurants.length === 0) {
+      setLoading(false);
+    }
+  }, [restaurants, restaurantsLoading, fetchAllOrders]);
+
+  const updateOrderStatus = useCallback(async (orderId: number, status: OrderStatusType) => {
+    try {
+      const restaurantId = Object.values(restaurantOrders)
+        .find(({ orders }) => orders.some(order => order.id === orderId))
+        ?.restaurant.id;
+
+      if (!restaurantId) {
+        throw new Error("Restaurant not found for this order");
+      }
+
+      const statusMapping: Record<string, number> = {
+        "pending": 1,
+        "accepted": 2, 
+        "preparing": 3,
+        "ready": 4,
+        "delivered": 5,
+        "cancelled": 6
+      };
+
+      const statusString = String(status).toLowerCase();
+      const statusId = statusMapping[statusString] || 2;
+        
+      const res = await fetch(`/api/proxy/restaurant/${restaurantId}/orders/${orderId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ status_id: statusId }),
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Status update failed:", errorText);
+        throw new Error("Erreur lors de la mise à jour");
+      }
+
+      const json = await res.json();
+      const updatedOrder = json.data || json;
+
+      setRestaurantOrders(prev => {
+        const updated = { ...prev };
+        Object.keys(updated).forEach(id => {
+          const restaurantId = parseInt(id);
+          updated[restaurantId] = {
+            ...updated[restaurantId],
+            orders: updated[restaurantId].orders.map(order => 
+              order.id === orderId ? { ...order, ...updatedOrder } : order
+            )
+          };
+        });
+        return updated;
+      });
+
+      setAllOrders(prev => prev.map(order => 
+        order.id === orderId ? { ...order, ...updatedOrder } : order
+      ));
+    } catch (err: any) {
+      console.error("Error in updateOrderStatus:", err);
+      throw new Error(err.message || "Erreur lors de la mise à jour");
+    }
+  }, [restaurantOrders]);
+
+  return {
+    restaurants,
+    restaurantOrders,
+    allOrders,
+    loading: loading || restaurantsLoading,
+    error: error || restaurantsError,
+    refetch: fetchAllOrders,
+    updateOrderStatus,
+  };
+}

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const COOLDOWN_MS = 30_000 // 30 seconds
+const COOLDOWN_MS = 30_000
 
 export async function middleware(req: NextRequest) {
   const token = req.cookies.get('token')?.value
@@ -9,7 +9,6 @@ export async function middleware(req: NextRequest) {
   const lastCheck = req.cookies.get('lastRefreshCheck')?.value
 
   if (!token || !refreshToken || !tokenExpires) {
-    console.log("Cookies middleware missing:", { token, refreshToken, tokenExpires })
     return NextResponse.redirect(new URL('/auth', req.url))
   }
 
@@ -77,6 +76,6 @@ function getIatFromJWT(token: string): number {
 
 export const config = {
   matcher: [
-    '/(create-company|create-menu|profile|restaurants)/:path*',
+    '/((?!api|_next/static|_next/image|favicon.ico|auth$|$).*)',
   ],
 }

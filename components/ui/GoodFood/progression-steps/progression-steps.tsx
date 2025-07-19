@@ -8,6 +8,7 @@ import {
   CarouselItem,
 } from "@/components/ui/shadcn/carousel";
 import { User, Camera, Info, ShieldCheck, Upload } from "lucide-react";
+import { COLORS } from "@/app/constants";
 
 const defaultSteps = [
   {
@@ -75,7 +76,7 @@ export default function ProfileSetupSteps({ steps = defaultSteps }) {
                 className={index === currentStep ? "block" : "hidden"}
               >
                 <div className="flex flex-col items-center text-center p-6">
-                  <step.icon className="text-blue-500" size={48} />
+                  <step.icon style={{ color: COLORS.info }} size={48} />
                   <h3 className="text-lg font-semibold mt-2">{step.title}</h3>
                   <p className="text-sm text-gray-600 mt-2">
                     {step.description}

@@ -1,6 +1,18 @@
 import { Item } from "../item";
 import { MenuCategory } from "./menuCategory";
 
+export interface RestaurantImage {
+  id: number;
+  filename: string;
+  path: string;
+  mimetype: string;
+  size: number;
+  isMain: boolean;
+  restaurant_id: number;
+  menu_item_id: number | null;
+  entityType: string;
+}
+
 export interface Restaurant {
   menuItems: Item[] | undefined;
   id: number;
@@ -21,6 +33,9 @@ export interface Restaurant {
   userId: number;
   created_at: string;
   updated_at: string;
+  images?: RestaurantImage[];
+  review_count?: number;
+  average_rating?: number;
   restaurantType: {
     id: number;
     name: string;

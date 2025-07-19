@@ -29,9 +29,15 @@ export function useMenuItems() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`http://localhost:8080/restaurateur/api/restaurant/${restaurantId}`);
+      const response = await fetch(`/api/proxy/restaurant/${restaurantId}`, {
+        credentials: "include",
+      });
+      
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des données du restaurant.");
+      }
+      
       const json = await response.json();
-
       const menuCategories: MenuCategory[] = json.data.menuCategories;
       const allItems: MenuItem[] = menuCategories.flatMap((category) => category.menuItems);
 
@@ -40,35 +46,91 @@ export function useMenuItems() {
       setError("Erreur lors de la récupération des articles.");
       console.error(err);
     } finally {
-      setLoading(false);4235674127
+      setLoading(false);
     }
   }, []);
 
   const addItem = useCallback(async (restaurantId: number, data: MenuItem) => {
-    const payload = {
-      name: data.name,
-      price: data.price,
-      description: data.description,
-      picture: data.picture ?? null,
-      promotion: data.promotion,
-      is_available: data.is_available,
-      position: data.position,
-      menuCategoryId: data.menuCategoryId,
-      options: data.menuItemOptions || [],
-    };
+    try {
+      const menuItemPayload = {
+        name: data.name,
+        price: parseFloat(data.price?.toString() || "0"),
+        description: data.description,
+        promotion: parseFloat(data.promotion?.toString() || "0"),
+        is_available: data.is_available,
+        position: data.position,
+        menuCategoryId: data.menuCategoryId,
+      };
 
-    const res = await fetch(
-      `/api/proxy/restaurant/${restaurantId}/menu-items`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+      const menuItemRes = await fetch(
+        `/api/proxy/menu-items`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(menuItemPayload),
+        }
+      );
+      if (!menuItemRes.ok) throw new Error("Échec création de l'article");
+      
+      const menuItemJson = await menuItemRes.json();
+      const createdMenuItem: MenuItem = menuItemJson.data ?? menuItemJson;
+      const menuItemId = createdMenuItem.id;
+
+      const createdOptions = [];
+      for (const [optionIndex, option] of (data.menuItemOptions || []).entries()) {
+        const optionPayload = {
+          name: option.name,
+          is_required: option.is_required,
+          is_multiple_choice: option.is_multiple_choice,
+          position: option.position,
+          menuItemId: menuItemId,
+        };
+
+        const optionRes = await fetch(
+          `/api/proxy/menu-item-options`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(optionPayload),
+          }
+        );
+        if (!optionRes.ok) throw new Error(`Échec création de l'option ${option.name}`);
+        
+        const optionJson = await optionRes.json();
+        const createdOption = optionJson.data ?? optionJson;
+        createdOptions.push(createdOption);
+
+        const optionValues = option.menuItemOptionValues || [];
+        for (const value of optionValues) {
+          const valuePayload = {
+            name: value.name,
+            extra_price: parseFloat(value.extra_price?.toString() || "0"),
+            position: value.position,
+            menuItemOptionId: createdOption.id,
+          };
+
+          const valueRes = await fetch(
+            `/api/proxy/menu-item-option-values`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(valuePayload),
+            }
+          );
+          if (!valueRes.ok) throw new Error(`Échec création de la valeur ${value.name}`);
+        }
       }
-    );
-    if (!res.ok) throw new Error("Échec ajout");
-    const json = await res.json();
-    const created: MenuItem = json.data ?? json;
-    setItems((prev) => [...prev, created]);
+
+      const finalMenuItem = {
+        ...createdMenuItem,
+        menuItemOptions: createdOptions,
+      };
+
+      setItems((prev) => [...prev, finalMenuItem]);
+    } catch (error) {
+      console.error("Error creating menu item:", error);
+      throw error;
+    }
   }, []);
 
   return {
