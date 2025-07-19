@@ -18,8 +18,8 @@ export function useMenuItems() {
       const data = json.data || json;
       setItems(data as MenuItem[]);
       setError(null);
-    } catch (err: any) {
-      setError(err.message || "Échec du chargement des articles.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Échec du chargement des articles.");
     } finally {
       setLoading(false);
     }
@@ -77,7 +77,7 @@ export function useMenuItems() {
       const menuItemId = createdMenuItem.id;
 
       const createdOptions = [];
-      for (const [optionIndex, option] of (data.menuItemOptions || []).entries()) {
+      for (const option of (data.menuItemOptions || [])) {
         const optionPayload = {
           name: option.name,
           is_required: option.is_required,

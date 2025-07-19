@@ -3,14 +3,14 @@ import { cookies } from 'next/headers';
 
 const BACKEND = process.env.BACKEND_URL || "http://localhost:8080";
 
-export async function GET(request: NextRequest, { params }: { params: { restaurantId: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ restaurantId: string }> }) {
   try {
     const token = (await cookies()).get("token")?.value;
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const restaurantId = params.restaurantId;
+    const { restaurantId } = await params;
 
     const response = await fetch(`${BACKEND}/restaurateur/api/client-review-restaurant/${restaurantId}`, {
       method: 'GET',

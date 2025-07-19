@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardContent } from "@/components/ui/shadcn/card";
 import { Button } from "@/components/ui/shadcn/button";
 import { Badge } from "@/components/ui/shadcn/badge";
-import { useOrders } from "@/components/hooks/useOrders";
 import { useAllRestaurantOrders } from "@/components/hooks/useAllRestaurantOrders";
 import { useCurrentUser } from "@/components/hooks/useCurrentUser";
 import { COLORS, ORDER_STATUS_COLORS, ORDER_STATUS_TEXT_COLORS } from "@/app/constants";
@@ -59,11 +58,15 @@ const ProfilePage = () => {
   const openRestaurants = restaurants.filter(r => r.is_open).length;
   const totalOrders = allOrders.length;
 
-  const calculateOrderTotal = (order: any) => {
-    if (!order.orderItems || !Array.isArray(order.orderItems)) return 0;
-    return order.orderItems.reduce((total: number, item: any) => {
-      const itemPrice = typeof item.menuItem?.price === 'number' ? item.menuItem.price : 0;
-      const quantity = typeof item.quantity === 'number' ? item.quantity : 1;
+  const calculateOrderTotal = (order: unknown) => {
+    if (typeof order !== 'object' || order === null || !('orderItems' in order)) return 0;
+    const orderObj = order as { orderItems: unknown[] };
+    if (!orderObj.orderItems || !Array.isArray(orderObj.orderItems)) return 0;
+    return orderObj.orderItems.reduce((total: number, item: unknown) => {
+      if (typeof item !== 'object' || item === null) return total;
+      const itemObj = item as { menuItem?: { price?: number }; quantity?: number };
+      const itemPrice = typeof itemObj.menuItem?.price === 'number' ? itemObj.menuItem.price : 0;
+      const quantity = typeof itemObj.quantity === 'number' ? itemObj.quantity : 1;
       return total + (itemPrice * quantity);
     }, 0);
   };
@@ -176,7 +179,7 @@ const ProfilePage = () => {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Commandes Total</p>
                   <p className="text-2xl font-bold text-gray-900">{totalOrders}</p>
-                  <p className="text-xs text-blue-600">{todayOrders} aujourd'hui</p>
+                  <p className="text-xs text-blue-600">{todayOrders} aujourd&apos;hui</p>
                 </div>
               </div>
             </CardContent>

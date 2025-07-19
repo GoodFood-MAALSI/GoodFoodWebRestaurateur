@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/shadcn
 import { Badge } from "@/components/ui/shadcn/badge";
 import { Button } from "@/components/ui/shadcn/button";
 import { Order, OrderStatusType } from "@/types/order";
-import { ORDER_STATUS_COLORS, ORDER_STATUS_TEXT_COLORS } from "@/app/constants";
+import { ORDER_STATUS_COLORS } from "@/app/constants";
 import { ORDER_STATUS_LABELS } from "@/app/orders/constants";
 import { Clock, MapPin, User, Phone, Mail } from "lucide-react";
 
@@ -17,9 +17,9 @@ const statusColors: Record<string, string> = ORDER_STATUS_COLORS;
 const statusLabels: Record<string, string> = ORDER_STATUS_LABELS;
 
 export default function OrderCard({ order, onStatusChange, onView }: OrderCardProps) {
-  const getStatusString = (status: any): string => {
-    if (typeof status === 'object' && status.name) {
-      return status.name.toLowerCase();
+  const getStatusString = (status: unknown): string => {
+    if (typeof status === 'object' && status !== null && 'name' in status) {
+      return String((status as { name: string }).name).toLowerCase();
     }
     return String(status).toLowerCase();
   };
@@ -32,7 +32,7 @@ export default function OrderCard({ order, onStatusChange, onView }: OrderCardPr
     }
   };
 
-  const getNextStatus = (currentStatus: any): OrderStatusType | null => {
+  const getNextStatus = (currentStatus: unknown): OrderStatusType | null => {
     const statusString = getStatusString(currentStatus);
     const statusFlow: Record<string, OrderStatusType | null> = {
       "en attente de l'acceptation du restaurant": "accepted",

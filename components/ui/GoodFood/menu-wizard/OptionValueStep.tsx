@@ -29,7 +29,7 @@ export default function OptionValueStep({ options, initial = [], onBack, onFinis
     });
   };
 
-  const updateValue = (optIdx: number, valIdx: number, key: keyof OptionValue, v: any) => {
+  const updateValue = (optIdx: number, valIdx: number, key: keyof OptionValue, v: unknown) => {
     setValuesByOption(prev => {
       const copy = prev.map(arr => arr.slice());
       copy[optIdx][valIdx] = { ...copy[optIdx][valIdx], [key]: v };

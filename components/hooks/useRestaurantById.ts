@@ -29,8 +29,8 @@ export function useRestaurantById(id: number) {
         if (isMounted) {
           setRestaurant(json.data);
         }
-      } catch (err: any) {
-        if (isMounted) setError(err.message);
+      } catch (err: unknown) {
+        if (isMounted) setError(err instanceof Error ? err.message : "Erreur inconnue");
       } finally {
         if (isMounted) setLoading(false);
       }

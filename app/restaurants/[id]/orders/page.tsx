@@ -8,6 +8,7 @@ import OrdersList from "@/components/ui/GoodFood/orders/OrdersList";
 import { Button } from "@/components/ui/shadcn/button";
 import { ArrowLeft } from "lucide-react";
 import { Toaster } from "@/components/ui/shadcn/sonner";
+import { OrderStatusType } from "@/types/order";
 import { toast } from "sonner";
 import { ORDER_STATUS_COLORS, ORDER_STATUS_TEXT_COLORS } from "@/app/constants";
 
@@ -19,7 +20,7 @@ export default function RestaurantOrdersPage() {
   const { restaurant, loading: restaurantLoading } = useRestaurantById(restaurantId);
   const { orders, loading, error, refetch, updateOrderStatus } = useOrders(restaurantId);
 
-  const handleStatusChange = async (orderId: number, status: any) => {
+  const handleStatusChange = async (orderId: number, status: OrderStatusType) => {
     try {
       await updateOrderStatus(orderId, status);
       toast.success("Statut de la commande mis à jour");
@@ -43,7 +44,7 @@ export default function RestaurantOrdersPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Restaurant introuvable</h1>
-          <p className="text-gray-600 mb-4">Le restaurant demandé n'existe pas.</p>
+          <p className="text-gray-600 mb-4">Le restaurant demandé n&apos;existe pas.</p>
           <Button onClick={() => router.push("/restaurants")}>
             Retour aux restaurants
           </Button>
@@ -52,9 +53,9 @@ export default function RestaurantOrdersPage() {
     );
   }
 
-  const getStatusString = (status: any): string => {
-    if (typeof status === 'object' && status.name) {
-      return status.name.toLowerCase();
+  const getStatusString = (status: unknown): string => {
+    if (typeof status === 'object' && status !== null && 'name' in status) {
+      return String((status as { name: string }).name).toLowerCase();
     }
     return String(status).toLowerCase();
   };

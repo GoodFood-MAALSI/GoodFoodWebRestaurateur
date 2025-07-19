@@ -5,20 +5,21 @@ const BACKEND = process.env.BACKEND_URL || "http://localhost:8080";
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string; orderId: string } }
+  { params }: { params: Promise<{ id: string; orderId: string }> }
 ) {
   const token = (await cookies()).get("token")?.value;
   if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
     const body = await req.json();
+    const { orderId } = await params;
     
     const requestBody = {
       status_id: body.status_id || body.status || body
     };
 
     const backendRes = await fetch(
-      `${BACKEND}/order/api/orders/${params.orderId}/status`,
+      `${BACKEND}/order/api/orders/${orderId}/status`,
       {
         method: "PATCH",
         headers: {
@@ -39,14 +40,15 @@ export async function PATCH(
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string; orderId: string } }
+  { params }: { params: Promise<{ id: string; orderId: string }> }
 ) {
   const token = (await cookies()).get("token")?.value;
   if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
+    const { orderId } = await params;
     const backendRes = await fetch(
-      `${BACKEND}/order/api/orders/${params.orderId}`,
+      `${BACKEND}/order/api/orders/${orderId}`,
       {
         method: "GET",
         headers: {

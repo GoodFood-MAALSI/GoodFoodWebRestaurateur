@@ -47,7 +47,15 @@ export function useRestaurants(userId: number) {
         }
 
         setRestaurants(
-          list.map((r: any) => {
+          list.map((r: {
+            id: number;
+            name: string;
+            description: string;
+            is_open?: boolean;
+            images?: RestaurantImage[];
+            review_count?: number;
+            average_rating?: number;
+          }) => {
             const mainImage = r.images?.find((img: RestaurantImage) => img.isMain);
             const imageUrl = mainImage?.path || r.images?.[0]?.path;
             
@@ -65,8 +73,8 @@ export function useRestaurants(userId: number) {
             };
           })
         );
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "Erreur inconnue");
       } finally {
         setLoading(false);
       }

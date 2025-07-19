@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
+export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
   const token = (await cookies()).get("token")?.value;
-  const { id } = params;
+  const { id } = await params;
 
   if (!token) {
     return NextResponse.json({ message: "Non autorisé" }, { status: 401 });
@@ -19,14 +19,14 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
 
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ message: "Erreur côté serveur" }, { status: 500 });
   }
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
   const token = (await cookies()).get("token")?.value;
-  const { id } = params;
+  const { id } = await params;
 
   if (!token) {
     return NextResponse.json({ message: "Non autorisé" }, { status: 401 });
@@ -45,14 +45,14 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ message: "Erreur côté serveur" }, { status: 500 });
   }
 }
 
-export async function DELETE(_: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
+export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
   const token = (await cookies()).get("token")?.value;
-  const { id } = params;
+  const { id } = await params;
 
   if (!token) {
     return NextResponse.json({ message: "Non autorisé" }, { status: 401 });
@@ -72,7 +72,7 @@ export async function DELETE(_: NextRequest, { params }: { params: { id: string 
     }
 
     return NextResponse.json({ message: "Supprimé avec succès" }, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ message: "Erreur côté serveur" }, { status: 500 });
   }
 }

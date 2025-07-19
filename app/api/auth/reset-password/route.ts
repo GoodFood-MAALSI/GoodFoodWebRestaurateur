@@ -14,7 +14,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ message: "Erreur côté serveur" }, { status: 500 });
   }
 }

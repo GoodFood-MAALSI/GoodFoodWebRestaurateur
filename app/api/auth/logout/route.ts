@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-export async function POST(_: NextRequest): Promise<NextResponse> {
+export async function POST(): Promise<NextResponse> {
   const token = (await cookies()).get("token")?.value;
 
   if (!token) {

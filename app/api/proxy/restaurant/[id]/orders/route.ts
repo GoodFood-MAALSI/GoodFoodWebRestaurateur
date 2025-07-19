@@ -5,12 +5,13 @@ const BACKEND = process.env.BACKEND_URL || "http://localhost:8080";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const token = (await cookies()).get("token")?.value;
   if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
+    const { id } = await params;
     const { searchParams } = new URL(req.url);
     const statusId = searchParams.get('status_id');
     const page = searchParams.get('page') || '1';
@@ -22,7 +23,7 @@ export async function GET(
     queryParams.append('limit', limit);
 
     const backendRes = await fetch(
-      `${BACKEND}/order/api/orders/restaurant/${params.id}?${queryParams.toString()}`,
+      `${BACKEND}/order/api/orders/restaurant/${id}?${queryParams.toString()}`,
       { 
         headers: { 
           Authorization: `Bearer ${token}`,
@@ -38,7 +39,8 @@ export async function GET(
     const data = await backendRes.json();
     return NextResponse.json(data, { status: backendRes.status });
   } catch (error) {
-    console.error(`Restaurant ${params.id} - Error fetching orders:`, error);
+    const { id } = await params;
+    console.error(`Restaurant ${id} - Error fetching orders:`, error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

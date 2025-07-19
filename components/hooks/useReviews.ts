@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ClientReview } from '@/types/review';
 import { fetchWithAuth } from '@/lib/fetchWithAuth';
 
@@ -7,7 +7,7 @@ export function useReviews(restaurantId?: number) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     if (!restaurantId) return;
     
     try {
@@ -28,7 +28,7 @@ export function useReviews(restaurantId?: number) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [restaurantId]);
 
   const calculateStats = () => {
     if (reviews.length === 0) {
@@ -57,7 +57,7 @@ export function useReviews(restaurantId?: number) {
 
   useEffect(() => {
     fetchReviews();
-  }, [restaurantId]);
+  }, [restaurantId, fetchReviews]);
 
   return {
     reviews,

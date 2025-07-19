@@ -5,13 +5,14 @@ const BACKEND = process.env.BACKEND_URL || "http://localhost:8080";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const token = (await cookies()).get("token")?.value;
   if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { id } = await params;
   const backendRes = await fetch(
-    `${BACKEND}/restaurateur/api/restaurant/${params.id}`,
+    `${BACKEND}/restaurateur/api/restaurant/${id}`,
     { headers: { Authorization: `Bearer ${token}` } }
   );
   const data = await backendRes.json();
@@ -19,8 +20,7 @@ export async function GET(
 }
 
 export async function POST(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  req: NextRequest
 ) {
   const token = (await cookies()).get("token")?.value;
   if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

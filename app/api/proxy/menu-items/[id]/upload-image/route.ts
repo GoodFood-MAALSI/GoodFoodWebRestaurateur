@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
   const token = (await cookies()).get("token")?.value;
 
   if (!token) {
@@ -10,6 +10,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
   try {
     const formData = await req.formData();
+    const { id } = await params;
     
     const backendFormData = new FormData();
     
@@ -20,7 +21,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     
     backendFormData.append("image", imageFile);
 
-    const response = await fetch(`${process.env.BACKEND_URL}/restaurateur/api/menu-items/${params.id}/upload-image`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/restaurateur/api/menu-items/${id}/upload-image`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,

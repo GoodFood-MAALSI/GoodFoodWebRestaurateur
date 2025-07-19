@@ -6,10 +6,10 @@ import OrdersList from "@/components/ui/GoodFood/orders/OrdersList";
 import { Toaster } from "@/components/ui/shadcn/sonner";
 import { toast } from "sonner";
 import { COLORS, ORDER_STATUS_COLORS, ORDER_STATUS_TEXT_COLORS } from "@/app/constants";
+import { OrderStatusType } from "@/types/order";
 
 export default function OrdersPage() {
   const { 
-    restaurants, 
     restaurantOrders, 
     allOrders, 
     loading, 
@@ -18,7 +18,7 @@ export default function OrdersPage() {
     updateOrderStatus 
   } = useAllRestaurantOrders(13);
 
-  const handleStatusChange = async (orderId: number, status: any) => {
+  const handleStatusChange = async (orderId: number, status: OrderStatusType) => {
     try {
       await updateOrderStatus(orderId, status);
       toast.success("Statut de la commande mis à jour");
@@ -28,9 +28,9 @@ export default function OrdersPage() {
     }
   };
 
-  const getStatusString = (status: any): string => {
-    if (typeof status === 'object' && status.name) {
-      return status.name.toLowerCase();
+  const getStatusString = (status: unknown): string => {
+    if (typeof status === 'object' && status !== null && 'name' in status) {
+      return String((status as { name: string }).name).toLowerCase();
     }
     return String(status).toLowerCase();
   };
@@ -131,7 +131,7 @@ export default function OrdersPage() {
               Aucune commande
             </h3>
             <p className="text-gray-600">
-              Vous n'avez pas encore reçu de commandes.
+              Vous n&apos;avez pas encore reçu de commandes.
             </p>
           </div>
         )}

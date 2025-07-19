@@ -49,7 +49,7 @@ const ItemDetailsModal: React.FC<Props> = ({ item, onClose }) => {
           </>
         ) : (
           <>
-            <h2 className="text-xl font-bold mb-2">Modifier l'élément</h2>
+            <h2 className="text-xl font-bold mb-2">Modifier l&apos;élément</h2>
             <EditItemForm item={item} onSuccess={() => {
               setIsEditing(false);
               onClose();

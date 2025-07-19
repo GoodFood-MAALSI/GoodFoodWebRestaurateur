@@ -19,7 +19,7 @@ export const useAddressGeocode = () => {
 
       const [long, lat] = feature.geometry.coordinates;
       return { lat, long, formattedAddress: feature.properties.label };
-    } catch (err) {
+    } catch {
       setError("Erreur lors du géocodage.");
       return null;
     } finally {

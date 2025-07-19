@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
   const token = (await cookies()).get("token")?.value;
 
   if (!token) {
@@ -9,8 +9,9 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 
   const body = await req.json();
+  const { id } = await params;
 
-  const response = await fetch(`${process.env.BACKEND_URL}/restaurateur/api/menu-item-option-values/${params.id}`, {
+  const response = await fetch(`${process.env.BACKEND_URL}/restaurateur/api/menu-item-option-values/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -24,14 +25,16 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   return NextResponse.json(data, { status: response.status });
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
   const token = (await cookies()).get("token")?.value;
 
   if (!token) {
     return NextResponse.json({ message: "Non autorisé" }, { status: 401 });
   }
 
-  const response = await fetch(`${process.env.BACKEND_URL}/restaurateur/api/menu-item-option-values/${params.id}`, {
+  const { id } = await params;
+
+  const response = await fetch(`${process.env.BACKEND_URL}/restaurateur/api/menu-item-option-values/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,
