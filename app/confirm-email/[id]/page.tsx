@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/shadcn/button";
 import { confirmEmailTexts } from "./constants";
-import { NEXT_PUBLIC_API_URL } from "@/app/constants";
+import { COLORS } from "@/app/constants";
 
 type ConfirmationState = "loading" | "success" | "error";
 
@@ -21,7 +21,7 @@ export default function ConfirmEmailPage() {
 
     const confirmEmail = async () => {
       try {
-        const res = await fetch(`${NEXT_PUBLIC_API_URL}/auth/confirm-email`, {
+        const res = await fetch(`/api/auth/confirm-email`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -53,7 +53,7 @@ export default function ConfirmEmailPage() {
             <p className="text-gray-700">{confirmEmailTexts.successMessage}</p>
             <Button
               className="mt-6 w-full text-white hover:opacity-90"
-              style={{ backgroundColor: "#16a34a" }}
+              style={{ backgroundColor: COLORS.success }}
               onClick={() => router.push(confirmEmailTexts.redirectUrl)}
             >
               {confirmEmailTexts.buttonLabel}
@@ -68,7 +68,7 @@ export default function ConfirmEmailPage() {
             <p className="text-gray-700">{confirmEmailTexts.errorMessage}</p>
             <Button
               className="mt-6 w-full text-white hover:opacity-90"
-              style={{ backgroundColor: "#dc2626" }}
+              style={{ backgroundColor: COLORS.error }}
               onClick={() => router.push("/")}
             >
               Retour à l&apos;accueil

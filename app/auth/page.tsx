@@ -4,8 +4,8 @@ import AuthForm from "@/components/forms/AuthForm";
 
 export default function AuthPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="w-full max-w-md space-y-6 bg-white p-8 shadow-lg rounded-lg">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-lg">
         <AuthForm />
       </div>
     </div>

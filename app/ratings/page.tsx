@@ -105,13 +105,11 @@ export default function RatingsPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4 max-w-6xl">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Avis et Évaluations</h1>
           <p className="text-gray-600">Gérez les avis clients de vos restaurants</p>
         </div>
 
-        {/* Restaurant Selector */}
         {restaurants.length > 1 && (
           <Card className="mb-6">
             <CardHeader>
@@ -139,7 +137,6 @@ export default function RatingsPage() {
 
         {currentRestaurant && (
           <>
-            {/* Stats Overview */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <Card>
                 <CardContent className="p-6">
@@ -181,7 +178,6 @@ export default function RatingsPage() {
               </Card>
             </div>
 
-            {/* Rating Distribution */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
               <Card className="lg:col-span-1">
                 <CardHeader>
@@ -195,7 +191,6 @@ export default function RatingsPage() {
              
             </div>
 
-            {/* Reviews List */}
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">

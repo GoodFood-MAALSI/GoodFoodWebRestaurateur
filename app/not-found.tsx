@@ -1,4 +1,3 @@
-// app/not-found.tsx (Next.js App Router)
 import Link from "next/link";
 import { Button } from "@/components/ui/shadcn/button";
 

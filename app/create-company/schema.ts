@@ -19,6 +19,7 @@ export const restaurantSchema = z.object({
   email: z.string().email("Adresse email invalide"),
   phone_number: z.string().regex(/^\d{9,15}$/, "Numéro de téléphone invalide"),
   siret: z.string().min(1, "Le SIRET est obligatoire"),
+  restaurantTypeId: z.string().min(1, "Le type de restaurant est requis"),
 
   is_open: z.boolean().default(false),
 });
