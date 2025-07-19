@@ -112,7 +112,6 @@ export default function OrderCard({ order, onStatusChange, onView }: OrderCardPr
                 Voir détails
               </Button>
               
-              {/* Show Accept button only for pending orders */}
               {(currentStatusString.includes("attente") || currentStatusString === "pending") && (
                 <Button 
                   size="sm" 
@@ -124,7 +123,6 @@ export default function OrderCard({ order, onStatusChange, onView }: OrderCardPr
                 </Button>
               )}
               
-              {/* Show next status button for accepted and later statuses (but not pending) */}
               {nextStatus && !currentStatusString.includes("attente") && currentStatusString !== "pending" && (
                 <Button 
                   size="sm" 

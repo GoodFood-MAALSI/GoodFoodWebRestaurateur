@@ -39,6 +39,7 @@ export const useRestaurantForm = () => {
         form.reset({
           ...restaurant,
           phone_number: restaurant.phone_number?.toString() || "",
+          restaurantTypeId: restaurant.restaurantTypeId?.toString() || "",
         });
       } catch (err) {
         console.error("Erreur lors du chargement du restaurant :", err);

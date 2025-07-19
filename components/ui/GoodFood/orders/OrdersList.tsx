@@ -40,7 +40,6 @@ export default function OrdersList({
   const [statusFilter, setStatusFilter] = useState<OrderStatusType | "all">("all");
   const [restaurantFilter, setRestaurantFilter] = useState<number | "all">("all");
 
-  // Handle order updates from the modal
   const handleOrderUpdate = (updatedOrder: Order) => {
     setSelectedOrder(updatedOrder);
   };
@@ -103,7 +102,6 @@ export default function OrdersList({
         </Button>
       </div>
 
-      {/* Filters */}
       <div className="space-y-4">
         <div>
           <h3 className="text-sm font-medium mb-2">Filtrer par statut</h3>
@@ -147,7 +145,6 @@ export default function OrdersList({
         )}
       </div>
 
-      {/* Orders Grid */}
       {filteredOrders.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-gray-500">Aucune commande trouvée</p>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/shadcn/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/shadcn/dialog";
 import { Button } from "@/components/ui/shadcn/button";
 import CategoryStep from "./CategoryStep";
 import ItemDetailsStep from "./ItemDetailsStep";
@@ -7,6 +7,7 @@ import OptionStep from "./OptionStep";
 import OptionValueStep from "./OptionValueStep";
 import ProgressionSteps from "@/components/ui/GoodFood/progression-steps/ProgressionSteps";
 import { MenuItem } from "@/types/menu/menuItem";
+import { COLORS } from "@/app/constants";
 
 interface MenuWizardProps {
   restaurantId: number;
@@ -25,24 +26,23 @@ export default function MenuWizard({ restaurantId, onFinish }: MenuWizardProps) 
   const back = () => setStep(s => s - 1);
 
   const handleFinish = () => {
-    const id = Date.now()
     const item: MenuItem = {
-      id,
+      id: Date.now(),
       name: details.name,
       description: details.description,
       price: details.price,
       promotion: details.promotion,
-      picture: "null",
       is_available: details.is_available,
       position: details.position,
       menuCategoryId: category.id,
+      picture: "",
       menuItemOptions: options.map((opt, idx) => ({
-      id: Date.now(),
-      name: opt.name,
-      is_required: opt.is_required,
-      is_multiple_choice: opt.is_multiple_choice,
-      position: opt.position,
-      menuItemOptionValues: values[idx] || [],
+        id: Date.now() + idx,
+        name: opt.name,
+        is_required: opt.is_required,
+        is_multiple_choice: opt.is_multiple_choice,
+        position: opt.position,
+        menuItemOptionValues: values[idx] || [],
       })),
     };
     onFinish(item);
@@ -62,11 +62,23 @@ export default function MenuWizard({ restaurantId, onFinish }: MenuWizardProps) 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Ajouter un article</Button>
+        <Button 
+          className="px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+          style={{ 
+            backgroundColor: COLORS.primary, 
+            color: COLORS.text.inverse,
+            borderColor: COLORS.primary 
+          }}
+        >
+          ✨ Ajouter un article
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Création d'article</DialogTitle>
+          <DialogDescription>
+            Créez un nouvel article pour votre menu en suivant les étapes guidées.
+          </DialogDescription>
         </DialogHeader>
         <ProgressionSteps
           steps={["Catégorie", "Détails", "Options", "Valeurs"]}
@@ -105,7 +117,16 @@ export default function MenuWizard({ restaurantId, onFinish }: MenuWizardProps) 
         </div>
         <DialogFooter>
           {step === 3 ? (
-            <Button onClick={handleFinish}>Terminer</Button>
+            <Button 
+              onClick={handleFinish}
+              style={{ 
+                backgroundColor: COLORS.success, 
+                color: COLORS.text.inverse,
+                borderColor: COLORS.success 
+              }}
+            >
+              Terminer
+            </Button>
           ) : null}
         </DialogFooter>
       </DialogContent>

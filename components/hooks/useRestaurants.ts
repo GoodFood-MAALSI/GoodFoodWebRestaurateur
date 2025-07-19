@@ -2,11 +2,26 @@
 
 import { useEffect, useState } from "react";
 
+interface RestaurantImage {
+  id: number;
+  filename: string;
+  path: string;
+  mimetype: string;
+  size: number;
+  isMain: boolean;
+  restaurant_id: number;
+  menu_item_id: number | null;
+  entityType: string;
+}
+
 interface Restaurant {
   id: number;
   name: string;
   description: string;
   image?: string;
+  is_open: boolean;
+  review_count?: number;
+  average_rating?: number;
 }
 
 export function useRestaurants(userId: number) {
@@ -32,12 +47,23 @@ export function useRestaurants(userId: number) {
         }
 
         setRestaurants(
-          list.map((r: any) => ({
-            id: r.id,
-            name: r.name,
-            description: r.description,
-            image: r.image ?? undefined,
-          }))
+          list.map((r: any) => {
+            const mainImage = r.images?.find((img: RestaurantImage) => img.isMain);
+            const imageUrl = mainImage?.path || r.images?.[0]?.path;
+            
+            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
+            const fullImageUrl = imageUrl ? `${backendUrl}/restaurateur/api${imageUrl}` : undefined;
+            
+            return {
+              id: r.id,
+              name: r.name,
+              description: r.description,
+              image: fullImageUrl,
+              is_open: r.is_open ?? false,
+              review_count: r.review_count ?? 0,
+              average_rating: r.average_rating ?? 0,
+            };
+          })
         );
       } catch (err: any) {
         setError(err.message);

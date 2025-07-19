@@ -37,7 +37,6 @@ export default function OrderDetailModal({
   const [notes, setNotes] = useState(order?.notes || "");
   const [loading, setLoading] = useState(false);
 
-  // Update local state when order prop changes
   React.useEffect(() => {
     setCurrentOrder(order);
     setNotes(order?.notes || "");
@@ -59,11 +58,9 @@ export default function OrderDetailModal({
       setLoading(true);
       await onStatusChange(currentOrder.id, newStatus);
       
-      // Update the local order state to reflect the new status immediately
       const updatedOrder = { ...currentOrder, status: { name: newStatus } as OrderStatus };
       setCurrentOrder(updatedOrder);
       
-      // Notify parent component of the update
       if (onOrderUpdate) {
         onOrderUpdate(updatedOrder);
       }
@@ -104,7 +101,6 @@ export default function OrderDetailModal({
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Customer Info */}
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold mb-3">Informations client</h3>
             <div className="space-y-2">
@@ -138,7 +134,6 @@ export default function OrderDetailModal({
             </div>
           </div>
 
-          {/* Order Items - Show message if no items available */}
           <div>
             <h3 className="font-semibold mb-3">Articles commandés</h3>
             {currentOrder.orderItems && currentOrder.orderItems.length > 0 ? (
@@ -206,7 +201,6 @@ export default function OrderDetailModal({
             )}
           </div>
 
-          {/* Pricing Summary */}
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="space-y-2">
               <div className="flex justify-between">
@@ -232,7 +226,6 @@ export default function OrderDetailModal({
             </div>
           </div>
 
-          {/* Notes */}
           <div>
             <h3 className="font-semibold mb-2">Notes</h3>
             <Textarea
@@ -243,9 +236,7 @@ export default function OrderDetailModal({
             />
           </div>
 
-          {/* Status Actions */}
           <div className="flex flex-wrap gap-2">
-            {/* Show Accept button only for pending orders */}
             {(currentStatusString.includes("attente") || currentStatusString === "pending") && (
               <>
                 <Button 

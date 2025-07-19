@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { forgotPasswordSchema } from "@/lib/validators/auth";
 import type { ForgotPasswordForm } from "@/types/auth";
-import { NEXT_PUBLIC_API_URL } from "@/app/constants";
 import { loginTexts } from "@/app/auth/constants";
 import { toast } from "sonner";
 
@@ -20,7 +19,7 @@ export function useForgotPassword(onClose?: () => void) {
 
   const onSubmit = async (data: ForgotPasswordForm) => {
     try {
-      const res = await fetch(`${NEXT_PUBLIC_API_URL}/auth/forgot-password`, {
+      const res = await fetch(`/api/auth/forgot-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

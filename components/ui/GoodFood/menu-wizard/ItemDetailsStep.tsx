@@ -28,7 +28,6 @@ export default function ItemDetailsStep({ initial, onBack, onNext }: ItemDetails
   const [isAvailable, setIsAvailable] = useState(initial?.is_available ?? true);
   const [position, setPosition] = useState(initial?.position || 1);
 
-  // validate that required fields are filled
   const canNext = name.trim() !== "" && price >= 0;
 
   return (
