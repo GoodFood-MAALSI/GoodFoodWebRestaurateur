@@ -21,7 +21,19 @@ export function useReviews(restaurantId?: number) {
       }
       
       const data = await response.json();
-      setReviews(Array.isArray(data) ? data : []);
+      
+      // Handle nested API structure with reviews.reviews array
+      if (data.reviews && data.reviews.reviews && Array.isArray(data.reviews.reviews)) {
+        setReviews(data.reviews.reviews);
+      } else if (data.reviews && Array.isArray(data.reviews)) {
+        // Handle direct reviews array structure
+        setReviews(data.reviews);
+      } else if (Array.isArray(data)) {
+        // Fallback for old structure
+        setReviews(data);
+      } else {
+        setReviews([]);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch reviews');
       setReviews([]);

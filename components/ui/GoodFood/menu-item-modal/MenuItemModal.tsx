@@ -10,6 +10,7 @@ import { MenuItem } from "@/types/menu/menuItem";
 import { MenuItemOption } from "@/types/menu/menuItemOption";
 import { MenuItemOptionValue } from "@/types/menu/menuItemOptionValue";
 import { COLORS } from "@/app/constants";
+import { getMenuItemImageUrl } from "@/lib/imageUtils";
 
 interface MenuItemModalProps {
   item: MenuItem;
@@ -33,9 +34,12 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
 
   useEffect(() => {
     setEditingItem(item);
-    const picture = item.picture;
-    if (picture && (picture.startsWith('http') || picture.startsWith('data:') || picture.startsWith('/'))) {
-      setImagePreview(picture);
+    
+    // Get image URL using the utility function
+    const imageUrl = getMenuItemImageUrl(item);
+    
+    if (imageUrl && imageUrl !== "/GoodFood/logo.png") {
+      setImagePreview(imageUrl);
       setIsLocalImagePreview(false);
     } else {
       setImagePreview(null);

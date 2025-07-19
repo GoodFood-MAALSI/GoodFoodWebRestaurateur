@@ -11,8 +11,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const { restaurantId } = await params;
-
-    const response = await fetch(`${BACKEND}/restaurateur/api/client-review-restaurant/restaurant/${restaurantId}`, {
+    const { searchParams } = new URL(request.url);
+    
+    // Get query parameters for time period (daily, weekly, monthly, yearly) and offset
+    const period = searchParams.get('period') || 'monthly';
+    const offset = searchParams.get('offset') || '0';
+    
+    const response = await fetch(`${BACKEND}/restaurateur/api/orders/restaurant/${restaurantId}/stats?period=${period}&offset=${offset}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -22,23 +27,15 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     if (!response.ok) {
       const errorData = await response.text();
       return NextResponse.json(
-        { error: errorData || 'Failed to fetch reviews' },
+        { error: errorData || 'Failed to fetch restaurant stats' },
         { status: response.status }
       );
     }
 
     const responseData = await response.json();
-    const reviews = responseData.reviews || responseData.data || [];
-    const meta = responseData.meta || null;
-    const links = responseData.links || null;
-    
-    return NextResponse.json({
-      reviews,
-      meta,
-      links
-    });
+    return NextResponse.json(responseData);
   } catch (error) {
-    console.error('Error fetching reviews:', error);
+    console.error('Error fetching restaurant stats:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

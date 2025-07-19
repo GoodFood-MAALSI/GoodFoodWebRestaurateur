@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/shadcn/button";
 import { Badge } from "@/components/ui/shadcn/badge";
 import { useAllRestaurantOrders } from "@/components/hooks/useAllRestaurantOrders";
 import { useCurrentUser } from "@/components/hooks/useCurrentUser";
+import { useComprehensiveStats } from "@/components/hooks/useComprehensiveStats";
 import { COLORS, ORDER_STATUS_COLORS, ORDER_STATUS_TEXT_COLORS } from "@/app/constants";
 import {
   User,
@@ -32,19 +33,16 @@ const ProfilePage = () => {
   const router = useRouter();
   
   const { user, restaurants, loading: userLoading, error: userError } = useCurrentUser();
+  const { stats, loading: statsLoading, error: statsError } = useComprehensiveStats();
   
   const firstUserId = user?.id || 11;
   const { allOrders, loading: ordersLoading } = useAllRestaurantOrders(firstUserId);
 
-  const [todayOrders, setTodayOrders] = useState(0);
-  const [monthlyRevenue, setMonthlyRevenue] = useState('0');
-  const [averageRating, setAverageRating] = useState('4.7');
-
-  useEffect(() => {
-    setTodayOrders(Math.floor(Math.random() * 25) + 5);
-    setMonthlyRevenue((Math.random() * 15000 + 8000).toFixed(0));
-    setAverageRating(`4.${Math.floor(Math.random() * 3) + 7}`);
-  }, []);
+  // Use real stats instead of hardcoded values
+  const todayOrders = stats.todayOrders;
+  const monthlyRevenue = stats.monthlyRevenue.toFixed(0);
+  const averageRating = stats.averageRating.toFixed(1);
+  const revenueGrowthPercentage = stats.revenueGrowthPercentage;
 
   const displayName = user?.first_name && user?.last_name 
     ? `${user.first_name} ${user.last_name}`
@@ -54,38 +52,23 @@ const ProfilePage = () => {
     ? new Date(user.created_at).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
     : 'Récemment';
 
-  const totalRestaurants = restaurants.length;
-  const openRestaurants = restaurants.filter(r => r.is_open).length;
-  const totalOrders = allOrders.length;
+  const totalRestaurants = stats.totalRestaurants;
+  const openRestaurants = stats.openRestaurants;
+  const totalOrders = stats.totalOrders;
 
+  // Use comprehensive stats for status counts
+  const statusCounts = stats.statusCounts;
+
+  // Helper function for order total calculation (still needed for display)
   const calculateOrderTotal = (order: unknown) => {
-    if (typeof order !== 'object' || order === null || !('orderItems' in order)) return 0;
-    const orderObj = order as { orderItems: unknown[] };
-    if (!orderObj.orderItems || !Array.isArray(orderObj.orderItems)) return 0;
-    return orderObj.orderItems.reduce((total: number, item: unknown) => {
-      if (typeof item !== 'object' || item === null) return total;
-      const itemObj = item as { menuItem?: { price?: number }; quantity?: number };
-      const itemPrice = typeof itemObj.menuItem?.price === 'number' ? itemObj.menuItem.price : 0;
-      const quantity = typeof itemObj.quantity === 'number' ? itemObj.quantity : 1;
-      return total + (itemPrice * quantity);
-    }, 0);
+    if (typeof order !== 'object' || order === null) return 0;
+    const orderObj = order as any;
+    const subtotal = parseFloat(orderObj.subtotal || "0");
+    const deliveryCosts = parseFloat(orderObj.delivery_costs || "0");
+    const serviceCharge = parseFloat(orderObj.service_charge || "0");
+    const discount = parseFloat(orderObj.global_discount || "0");
+    return subtotal + deliveryCosts + serviceCharge - discount;
   };
-
-  const getStatusCounts = () => {
-    const counts = { pending: 0, accepted: 0, preparing: 0, ready: 0, delivered: 0, cancelled: 0 };
-    allOrders.forEach(order => {
-      const statusString = typeof order.status === 'object' ? order.status.name?.toLowerCase() : String(order.status).toLowerCase();
-      if (statusString.includes('attente') || statusString === 'pending') counts.pending++;
-      else if (statusString === 'accepted') counts.accepted++;
-      else if (statusString === 'preparing') counts.preparing++;
-      else if (statusString === 'ready') counts.ready++;
-      else if (statusString === 'delivered') counts.delivered++;
-      else if (statusString === 'cancelled') counts.cancelled++;
-    });
-    return counts;
-  };
-
-  const statusCounts = getStatusCounts();
 
   const quickActions = [
     {
@@ -137,6 +120,17 @@ const ProfilePage = () => {
           </div>
         )}
 
+        {statsError && (
+          <div className="text-center py-4">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+              <p className="text-yellow-800 font-medium">Attention</p>
+              <p className="text-yellow-600 text-sm mt-1">
+                Certaines statistiques peuvent ne pas être à jour: {statsError}
+              </p>
+            </div>
+          </div>
+        )}
+
         {userError && (
           <div className="text-center py-8">
             <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-4">
@@ -178,8 +172,20 @@ const ProfilePage = () => {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Commandes Total</p>
-                  <p className="text-2xl font-bold text-gray-900">{totalOrders}</p>
-                  <p className="text-xs text-blue-600">{todayOrders} aujourd&apos;hui</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {statsLoading ? (
+                      <span className="inline-block w-16 h-6 bg-gray-200 rounded animate-pulse"></span>
+                    ) : (
+                      totalOrders
+                    )}
+                  </p>
+                  <p className="text-xs text-blue-600">
+                    {statsLoading ? (
+                      <span className="inline-block w-20 h-3 bg-gray-200 rounded animate-pulse"></span>
+                    ) : (
+                      `${todayOrders} aujourd'hui`
+                    )}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -193,8 +199,22 @@ const ProfilePage = () => {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">CA du Mois</p>
-                  <p className="text-2xl font-bold text-gray-900">€{monthlyRevenue}</p>
-                  <p className="text-xs text-green-600">+12% vs dernier mois</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {statsLoading ? (
+                      <span className="inline-block w-20 h-6 bg-gray-200 rounded animate-pulse"></span>
+                    ) : (
+                      `€${monthlyRevenue}`
+                    )}
+                  </p>
+                  <p className={`text-xs ${revenueGrowthPercentage >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {statsLoading ? (
+                      <span className="inline-block w-16 h-3 bg-gray-200 rounded animate-pulse"></span>
+                    ) : (
+                      revenueGrowthPercentage >= 0 
+                        ? `+${revenueGrowthPercentage.toFixed(1)}% vs dernier mois`
+                        : `${revenueGrowthPercentage.toFixed(1)}% vs dernier mois`
+                    )}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -208,8 +228,20 @@ const ProfilePage = () => {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Note Moyenne</p>
-                  <p className="text-2xl font-bold text-gray-900">{averageRating}</p>
-                  <p className="text-xs text-yellow-600">Sur {totalOrders} avis</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {statsLoading ? (
+                      <span className="inline-block w-12 h-6 bg-gray-200 rounded animate-pulse"></span>
+                    ) : (
+                      averageRating || "N/A"
+                    )}
+                  </p>
+                  <p className="text-xs text-yellow-600">
+                    {statsLoading ? (
+                      <span className="inline-block w-16 h-3 bg-gray-200 rounded animate-pulse"></span>
+                    ) : (
+                      `Basé sur les avis`
+                    )}
+                  </p>
                 </div>
               </div>
             </CardContent>

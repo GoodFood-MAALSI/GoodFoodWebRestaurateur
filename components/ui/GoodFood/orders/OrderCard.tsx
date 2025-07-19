@@ -75,24 +75,28 @@ export default function OrderCard({ order, onStatusChange, onView }: OrderCardPr
           <div className="flex items-center gap-2">
             <User className="w-4 h-4 text-gray-500" />
             <span className="text-sm">
-              {order.customer ? 
-                `${order.customer.first_name} ${order.customer.last_name}` : 
-                `Client #${order.client_id}`
+              {order.client ? 
+                `${order.client.first_name} ${order.client.last_name}` : 
+                order.customer ? 
+                  `${order.customer.first_name} ${order.customer.last_name}` : 
+                  `Client #${order.client_id}`
               }
             </span>
           </div>
           
-          {order.customer?.phone_number && (
-            <div className="flex items-center gap-2">
-              <Phone className="w-4 h-4 text-gray-500" />
-              <span className="text-sm">{order.customer.phone_number}</span>
-            </div>
-          )}
-          
           <div className="flex items-center gap-2">
             <Mail className="w-4 h-4 text-gray-500" />
-            <span className="text-sm">{order.customer?.email || 'Email non disponible'}</span>
+            <span className="text-sm">
+              {order.client?.email || order.customer?.email || 'Email non disponible'}
+            </span>
           </div>
+          
+          {order.description && (
+            <div className="flex items-start gap-2">
+              <Clock className="w-4 h-4 text-gray-500 mt-0.5" />
+              <span className="text-sm text-gray-600">{order.description}</span>
+            </div>
+          )}
           
           <div className="flex items-center gap-2">
             <MapPin className="w-4 h-4 text-gray-500" />

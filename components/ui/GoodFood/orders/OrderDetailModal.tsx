@@ -107,30 +107,49 @@ export default function OrderDetailModal({
               <div className="flex items-center gap-2">
                 <User className="w-4 h-4 text-gray-500" />
                 <span>
-                  {currentOrder.customer ? 
-                    `${currentOrder.customer.first_name} ${currentOrder.customer.last_name}` : 
-                    `Client #${currentOrder.client_id}`
+                  {currentOrder.client ? 
+                    `${currentOrder.client.first_name} ${currentOrder.client.last_name}` : 
+                    currentOrder.customer ? 
+                      `${currentOrder.customer.first_name} ${currentOrder.customer.last_name}` : 
+                      `Client #${currentOrder.client_id}`
                   }
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-gray-500" />
-                <span>{currentOrder.customer?.email || 'Email non disponible'}</span>
+                <span>
+                  {currentOrder.client?.email || currentOrder.customer?.email || 'Email non disponible'}
+                </span>
               </div>
-              {currentOrder.customer?.phone_number && (
-                <div className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-gray-500" />
-                  <span>{currentOrder.customer.phone_number}</span>
-                </div>
-              )}
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-gray-500" />
                 <span>{deliveryAddress}</span>
               </div>
+              {currentOrder.description && (
+                <div className="flex items-start gap-2">
+                  <Clock className="w-4 h-4 text-gray-500 mt-0.5" />
+                  <div>
+                    <span className="text-sm font-medium">Instructions: </span>
+                    <span className="text-sm text-gray-600">{currentOrder.description}</span>
+                  </div>
+                </div>
+              )}
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-gray-500" />
                 <span>Commandé le {new Date(currentOrder.created_at).toLocaleString("fr-FR")}</span>
               </div>
+              {currentOrder.restaurant && (
+                <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                  <h4 className="text-sm font-medium mb-2">Restaurant</h4>
+                  <div className="text-sm text-gray-600">
+                    <div>{currentOrder.restaurant.name}</div>
+                    <div>{currentOrder.restaurant.street_number} {currentOrder.restaurant.street}</div>
+                    <div>{currentOrder.restaurant.city} {currentOrder.restaurant.postal_code}</div>
+                    <div>{currentOrder.restaurant.email}</div>
+                    <div>{currentOrder.restaurant.phone_number}</div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
