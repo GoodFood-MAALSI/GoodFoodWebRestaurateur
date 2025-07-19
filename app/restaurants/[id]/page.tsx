@@ -3,8 +3,9 @@
 import { useParams, useRouter } from "next/navigation";
 import RestaurantDetails from "@/components/features/restaurant/RestaurantDetails";
 import { useRestaurantById } from "@/components/hooks/useRestaurantById";
+import { useRestaurantStats } from "@/components/hooks/useRestaurantStats";
 import { COLORS } from "@/app/constants";
-import { Star, Utensils, ShoppingBag, TrendingUp, Users, Clock, ArrowLeft } from "lucide-react";
+import { Star, Utensils, ShoppingBag, TrendingUp, Users, Clock, ArrowLeft, Euro, Package } from "lucide-react";
 import { Switch } from "@/components/ui/shadcn/switch";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/shadcn/sonner";
@@ -41,6 +42,7 @@ export default function RestaurantPage() {
   const router = useRouter();
   const restaurantId = Number(id);
   const { restaurant, loading, error } = useRestaurantById(restaurantId);
+  const { stats, loading: statsLoading } = useRestaurantStats(restaurantId);
   const [isToggling, setIsToggling] = useState(false);
 
   if (loading) return (
@@ -136,11 +138,28 @@ export default function RestaurantPage() {
 
   const averageRating = restaurant.average_rating || 4.2;
   const totalReviews = restaurant.review_count || 127;
+
+  // Real stats data or fallbacks
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: 'EUR',
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
+
+  // Use real stats or show loading/fallback values
+  const displayStats = {
+    ordersCount: stats ? stats.order_count : (statsLoading ? '...' : 0),
+    revenue: stats ? formatCurrency(stats.revenue) : (statsLoading ? '...' : formatCurrency(0)),
+    itemsSold: stats ? stats.item_count : (statsLoading ? '...' : 0),
+    popularItem: stats ? stats.menu_item.name : (statsLoading ? 'Chargement...' : 'Aucune donnée')
+  };
   
   const mainImage = restaurant.images?.find(img => img.isMain);
   const imageUrl = mainImage?.path || restaurant.images?.[0]?.path;
   const fullImageUrl = imageUrl 
-    ? `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080'}/restaurateur/api${imageUrl}`
+    ? `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080'}/restaurateur/api${imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`}`
     : null;
 
   const ratingBreakdown = [
@@ -226,7 +245,7 @@ export default function RestaurantPage() {
         <div className="max-w-7xl mx-auto py-12 px-4 space-y-8">
           
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-xl p-6 border border-gray-100 transform hover:scale-105 transition-all duration-200">
             <div className="flex items-center">
               <div className="w-12 h-12 rounded-lg flex items-center justify-center mr-4" style={{ backgroundColor: COLORS.secondary + '20' }}>
@@ -247,9 +266,9 @@ export default function RestaurantPage() {
                 <ShoppingBag className="w-6 h-6" style={{ color: COLORS.primary }} />
               </div>
               <div>
-                <h3 className="text-sm font-medium text-gray-500">Commandes ce mois</h3>
+                <h3 className="text-sm font-medium text-gray-500">Commandes totales</h3>
                 <p className="text-xl font-bold" style={{ color: COLORS.text.primary }}>
-                  {Math.floor(Math.random() * 200) + 50}
+                  {displayStats.ordersCount}
                 </p>
               </div>
             </div>
@@ -258,17 +277,63 @@ export default function RestaurantPage() {
           <div className="bg-white rounded-xl shadow-xl p-6 border border-gray-100 transform hover:scale-105 transition-all duration-200">
             <div className="flex items-center">
               <div className="w-12 h-12 rounded-lg flex items-center justify-center mr-4" style={{ backgroundColor: COLORS.success + '20' }}>
-                <TrendingUp className="w-6 h-6" style={{ color: COLORS.success }} />
+                <Euro className="w-6 h-6" style={{ color: COLORS.success }} />
               </div>
               <div>
                 <h3 className="text-sm font-medium text-gray-500">Chiffre d&apos;affaires</h3>
                 <p className="text-xl font-bold" style={{ color: COLORS.text.primary }}>
-                  €{(Math.random() * 10000 + 5000).toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
+                  {displayStats.revenue}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-xl p-6 border border-gray-100 transform hover:scale-105 transition-all duration-200">
+            <div className="flex items-center">
+              <div className="w-12 h-12 rounded-lg flex items-center justify-center mr-4" style={{ backgroundColor: COLORS.status.medium + '20' }}>
+                <Package className="w-6 h-6" style={{ color: COLORS.status.medium }} />
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-gray-500">Articles vendus</h3>
+                <p className="text-xl font-bold" style={{ color: COLORS.text.primary }}>
+                  {displayStats.itemsSold}
                 </p>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Popular Menu Item Section */}
+        {stats && (
+          <div className="mb-8">
+            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 border border-yellow-200 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 rounded-lg bg-yellow-100 flex items-center justify-center">
+                    <span className="text-2xl">🏆</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Article le plus populaire
+                    </h3>
+                    <p className="text-xl font-bold text-gray-800">
+                      {stats.menu_item.name}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {formatCurrency(parseFloat(stats.menu_item.price))} • {stats.item_count} ventes
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg">
+                    <div className="text-2xl font-bold">#{stats.menu_item_id}</div>
+                    <div className="text-xs font-medium">ID Article</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
