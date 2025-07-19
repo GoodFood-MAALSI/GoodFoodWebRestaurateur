@@ -135,7 +135,7 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
   const mainImage = restaurant.images?.find(img => img.isMain);
   const displayImage = mainImage?.path || restaurant.images?.[0]?.path;
   const fullImageUrl = displayImage 
-    ? `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080'}/restaurateur/api/${displayImage}`
+    ? `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080'}/restaurateur/api${displayImage}`
     : null;
 
   return (
