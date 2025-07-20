@@ -11,8 +11,22 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const { restaurantId } = await params;
+    const { searchParams } = new URL(request.url);
+    
+    const page = searchParams.get('page') || '1';
+    const limit = searchParams.get('limit') || '10';
+    const rating = searchParams.get('rating');
 
-    const response = await fetch(`${BACKEND}/restaurateur/api/client-review-restaurant/restaurant/${restaurantId}`, {
+    const queryParams = new URLSearchParams({
+      page,
+      limit,
+    });
+    
+    if (rating) {
+      queryParams.append('rating', rating);
+    }
+
+    const response = await fetch(`${BACKEND}/restaurateur/api/client-review-restaurant/restaurant/${restaurantId}?${queryParams.toString()}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,

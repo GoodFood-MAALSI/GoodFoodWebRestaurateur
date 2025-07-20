@@ -12,14 +12,33 @@ interface RestaurantWithOrders {
     image?: string;
   };
   orders: Order[];
+  pagination?: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  };
   loading: boolean;
   error: string | null;
 }
 
-export function useAllRestaurantOrders(userId: number) {
-  const { restaurants, loading: restaurantsLoading, error: restaurantsError } = useRestaurants(userId);
+interface PaginationOptions {
+  page?: number;
+  limit?: number;
+  statusId?: number;
+}
+
+export function useAllRestaurantOrders(userId: number, options: PaginationOptions = {}) {
+  const { page = 1, limit = 10, statusId } = options;
+  const { restaurants, loading: restaurantsLoading, error: restaurantsError } = useRestaurants();
   const [restaurantOrders, setRestaurantOrders] = useState<Record<number, RestaurantWithOrders>>({});
   const [allOrders, setAllOrders] = useState<Order[]>([]);
+  const [allOrdersPagination, setAllOrdersPagination] = useState<{
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,7 +51,16 @@ export function useAllRestaurantOrders(userId: number) {
       
       const ordersPromises = restaurants.map(async (restaurant) => {
         try {
-          const res = await fetch(`/api/proxy/restaurant/${restaurant.id}/orders`, {
+          const queryParams = new URLSearchParams({
+            page: page.toString(),
+            limit: limit.toString(),
+          });
+          
+          if (statusId) {
+            queryParams.append('status_id', statusId.toString());
+          }
+
+          const res = await fetch(`/api/proxy/restaurant/${restaurant.id}/orders?${queryParams.toString()}`, {
             credentials: "include",
           });
 
@@ -43,8 +71,11 @@ export function useAllRestaurantOrders(userId: number) {
           const json = await res.json();
           
           let ordersData;
+          let paginationData = null;
+          
           if (json.data && json.data.orders) {
             ordersData = json.data.orders;
+            paginationData = json.data.pagination || json.pagination;
           } else if (json.data) {
             ordersData = Array.isArray(json.data) ? json.data : [json.data];
           } else {
@@ -54,6 +85,7 @@ export function useAllRestaurantOrders(userId: number) {
           return {
             restaurant,
             orders: ordersData,
+            pagination: paginationData,
             loading: false,
             error: null,
           };
@@ -62,6 +94,7 @@ export function useAllRestaurantOrders(userId: number) {
           return {
             restaurant,
             orders: [],
+            pagination: undefined,
             loading: false,
             error: err instanceof Error ? err.message : "Erreur de chargement",
           };
@@ -72,20 +105,32 @@ export function useAllRestaurantOrders(userId: number) {
       
       const ordersMap: Record<number, RestaurantWithOrders> = {};
       const combinedOrders: Order[] = [];
+      let totalItems = 0;
+      let totalPages = 1;
       
       results.forEach((result) => {
         ordersMap[result.restaurant.id] = result;
         combinedOrders.push(...result.orders);
+        if (result.pagination) {
+          totalItems += result.pagination.totalItems;
+          totalPages = Math.max(totalPages, result.pagination.totalPages);
+        }
       });
 
       setRestaurantOrders(ordersMap);
       setAllOrders(combinedOrders);
+      setAllOrdersPagination({
+        currentPage: page,
+        totalPages,
+        totalItems,
+        itemsPerPage: limit,
+      });
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Erreur lors du chargement des commandes");
     } finally {
       setLoading(false);
     }
-  }, [restaurants]);
+  }, [restaurants, page, limit, statusId]);
 
   useEffect(() => {
     if (!restaurantsLoading && restaurants.length > 0) {
@@ -162,6 +207,7 @@ export function useAllRestaurantOrders(userId: number) {
     restaurants,
     restaurantOrders,
     allOrders,
+    allOrdersPagination,
     loading: loading || restaurantsLoading,
     error: error || restaurantsError,
     refetch: fetchAllOrders,

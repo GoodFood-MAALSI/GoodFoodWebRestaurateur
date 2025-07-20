@@ -1,4 +1,5 @@
 import { MapPin, Star, Clock } from "lucide-react";
+import { COLORS } from "@/app/constants";
 
 interface RestaurantCardProps {
   name: string;
@@ -25,16 +26,32 @@ export const RestaurantCard = ({
       className="group cursor-pointer bg-white rounded-2xl border border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
     >
       <div className="relative overflow-hidden">
-        <img 
-          src={image || "/GoodFood/logo.png"} 
-          alt={name} 
-          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" 
-          style={{
-            width: '100%',
-            height: '192px',
-            objectFit: 'cover'
-          }}
-        />
+        {image ? (
+          <img 
+            src={image} 
+            alt={name} 
+            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" 
+            style={{
+              width: '100%',
+              height: '192px',
+              objectFit: 'cover'
+            }}
+          />
+        ) : (
+          <div 
+            className="w-full h-48 group-hover:scale-105 transition-transform duration-300 flex items-center justify-center"
+            style={{
+              background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.secondary} 100%)`,
+              width: '100%',
+              height: '192px',
+            }}
+          >
+            <div className="text-white text-center">
+              <div className="text-6xl mb-2">🍽️</div>
+              <p className="text-lg font-semibold opacity-90">Aucune image</p>
+            </div>
+          </div>
+        )}
         <div className="absolute top-4 right-4">
           {averageRating > 0 && (
             <div className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1">

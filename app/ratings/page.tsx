@@ -6,6 +6,8 @@ import { useReviews } from '@/components/hooks/useReviews';
 import { Button } from '@/components/ui/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/shadcn/card';
 import { Badge } from '@/components/ui/shadcn/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/shadcn/select';
+import { Pagination } from '@/components/ui/GoodFood/pagination/Pagination';
 import { 
   Star, 
   User, 
@@ -14,18 +16,53 @@ import {
   TrendingUp,
   Users,
   BarChart3,
-  RefreshCw
+  RefreshCw,
+  Filter
 } from 'lucide-react'; 
 
 export default function RatingsPage() {
   const { restaurants, loading: userLoading } = useCurrentUser();
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [ratingFilter, setRatingFilter] = useState<number | undefined>(undefined);
 
   const currentRestaurantId = selectedRestaurantId || (restaurants && restaurants.length > 0 ? restaurants[0].id : null);
 
-  const { reviews, loading, error, fetchReviews, stats } = useReviews(currentRestaurantId || undefined);
+  const { reviews, pagination, loading, error, fetchReviews, stats } = useReviews(
+    currentRestaurantId || undefined,
+    {
+      page: currentPage,
+      limit: itemsPerPage,
+      rating: ratingFilter,
+    }
+  );
 
   const currentRestaurant = restaurants?.find(r => r.id === currentRestaurantId);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1); // Reset to first page when changing items per page
+  };
+
+  const handleRestaurantChange = (restaurantId: number) => {
+    setSelectedRestaurantId(restaurantId);
+    setCurrentPage(1); // Reset to first page when changing restaurant
+    setRatingFilter(undefined); // Reset filter when changing restaurant
+  };
+
+  const handleRatingFilterChange = (rating: string) => {
+    if (rating === 'all') {
+      setRatingFilter(undefined);
+    } else {
+      setRatingFilter(parseInt(rating));
+    }
+    setCurrentPage(1); // Reset to first page when changing filter
+  };
 
   const StarRating = ({ rating, onRatingChange, readonly = false }: { 
     rating: number; 
@@ -122,7 +159,7 @@ export default function RatingsPage() {
                   <Button
                     key={restaurant.id}
                     variant={currentRestaurantId === restaurant.id ? "default" : "outline"}
-                    onClick={() => setSelectedRestaurantId(restaurant.id)}
+                    onClick={() => handleRestaurantChange(restaurant.id)}
                     className="flex items-center gap-2"
                   >
                     {restaurant.name}
@@ -191,17 +228,39 @@ export default function RatingsPage() {
 
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle>Tous les avis ({stats.totalReviews})</CardTitle>
-                  <Button
-                    onClick={fetchReviews}
-                    variant="outline"
-                    size="sm"
-                    disabled={loading}
-                  >
-                    <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                    Actualiser
-                  </Button>
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <CardTitle>Tous les avis ({pagination?.totalItems || stats.totalReviews})</CardTitle>
+                  <div className="flex items-center gap-4">
+                    {/* Rating Filter */}
+                    <div className="flex items-center gap-2">
+                      <Filter className="w-4 h-4" />
+                      <Select
+                        value={ratingFilter?.toString() || 'all'}
+                        onValueChange={handleRatingFilterChange}
+                      >
+                        <SelectTrigger className="w-32">
+                          <SelectValue placeholder="Filtre" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Toutes notes</SelectItem>
+                          <SelectItem value="5">5 étoiles</SelectItem>
+                          <SelectItem value="4">4 étoiles</SelectItem>
+                          <SelectItem value="3">3 étoiles</SelectItem>
+                          <SelectItem value="2">2 étoiles</SelectItem>
+                          <SelectItem value="1">1 étoile</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Button
+                      onClick={fetchReviews}
+                      variant="outline"
+                      size="sm"
+                      disabled={loading}
+                    >
+                      <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                      Actualiser
+                    </Button>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>
@@ -257,6 +316,19 @@ export default function RatingsPage() {
                         </p>
                       </div>
                     ))}
+                    
+                    {pagination && pagination.totalPages > 1 && (
+                      <div className="mt-8 pt-6 border-t border-gray-200">
+                        <Pagination
+                          currentPage={pagination.currentPage}
+                          totalPages={pagination.totalPages}
+                          itemsPerPage={pagination.itemsPerPage}
+                          totalItems={pagination.totalItems}
+                          onPageChange={handlePageChange}
+                          onItemsPerPageChange={handleItemsPerPageChange}
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </CardContent>

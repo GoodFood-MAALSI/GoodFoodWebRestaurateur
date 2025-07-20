@@ -136,8 +136,9 @@ export default function RestaurantPage() {
     }
   };
 
-  const averageRating = restaurant.average_rating || 4.2;
-  const totalReviews = restaurant.review_count || 127;
+  const averageRating = restaurant.average_rating || 0;
+  const totalReviews = restaurant.review_count || 0;
+  const hasReviews = totalReviews > 0;
 
   // Real stats data or fallbacks
   const formatCurrency = (amount: number) => {
@@ -153,7 +154,7 @@ export default function RestaurantPage() {
     ordersCount: stats ? stats.order_count : (statsLoading ? '...' : 0),
     revenue: stats ? formatCurrency(stats.revenue) : (statsLoading ? '...' : formatCurrency(0)),
     itemsSold: stats ? stats.item_count : (statsLoading ? '...' : 0),
-    popularItem: stats ? stats.menu_item.name : (statsLoading ? 'Chargement...' : 'Aucune donnée')
+    popularItem: stats && stats.menu_item ? stats.menu_item.name : (statsLoading ? 'Chargement...' : 'Aucune donnée')
   };
   
   const mainImage = restaurant.images?.find(img => img.isMain);
@@ -162,13 +163,11 @@ export default function RestaurantPage() {
     ? `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080'}/restaurateur/api${imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`}`
     : null;
 
-  const ratingBreakdown = [
-    { stars: 5, count: 68, percentage: 53.5 },
-    { stars: 4, count: 32, percentage: 25.2 },
-    { stars: 3, count: 18, percentage: 14.2 },
-    { stars: 2, count: 6, percentage: 4.7 },
-    { stars: 1, count: 3, percentage: 2.4 },
-  ];
+  // Only show real rating breakdown if we have reviews
+  const ratingBreakdown: { stars: number; count: number; percentage: number }[] = hasReviews ? [
+    // This would come from real API data in the future
+    // For now, we don't show breakdown without real data
+  ] : [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
@@ -304,7 +303,7 @@ export default function RestaurantPage() {
         </div>
 
         {/* Popular Menu Item Section */}
-        {stats && (
+        {stats && stats.menu_item && (
           <div className="mb-8">
             <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 border border-yellow-200 shadow-lg">
               <div className="flex items-center justify-between">
@@ -388,36 +387,52 @@ export default function RestaurantPage() {
                   </h2>
                 </div>
 
-                <div className="text-center mb-6 p-6 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg">
-                  <div className="text-5xl font-bold mb-2" style={{ color: COLORS.text.primary }}>
-                    {averageRating.toFixed(1)}
-                  </div>
-                  <StarRating rating={averageRating} />
-                  <p className="text-sm text-gray-600 mt-2">
-                    Basé sur {totalReviews} avis
-                  </p>
-                </div>
-
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-gray-700 mb-3">Détail des notes</h3>
-                  {ratingBreakdown.map((rating) => (
-                    <div key={rating.stars} className="flex items-center space-x-3">
-                      <div className="flex items-center space-x-1">
-                        <span className="text-sm font-medium w-2">{rating.stars}</span>
-                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                {hasReviews ? (
+                  <>
+                    <div className="text-center mb-6 p-6 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg">
+                      <div className="text-5xl font-bold mb-2" style={{ color: COLORS.text.primary }}>
+                        {averageRating.toFixed(1)}
                       </div>
-                      <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-yellow-400 transition-all duration-300"
-                          style={{ width: `${rating.percentage}%` }}
-                        />
-                      </div>
-                      <span className="text-sm text-gray-600 w-8 text-right">
-                        {rating.count}
-                      </span>
+                      <StarRating rating={averageRating} />
+                      <p className="text-sm text-gray-600 mt-2">
+                        Basé sur {totalReviews} avis
+                      </p>
                     </div>
-                  ))}
-                </div>
+
+                    {ratingBreakdown.length > 0 && (
+                      <div className="space-y-3">
+                        <h3 className="font-semibold text-gray-700 mb-3">Détail des notes</h3>
+                        {ratingBreakdown.map((rating) => (
+                          <div key={rating.stars} className="flex items-center space-x-3">
+                            <div className="flex items-center space-x-1">
+                              <span className="text-sm font-medium w-2">{rating.stars}</span>
+                              <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                            </div>
+                            <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-yellow-400 transition-all duration-300"
+                                style={{ width: `${rating.percentage}%` }}
+                              />
+                            </div>
+                            <span className="text-sm text-gray-600 w-8 text-right">
+                              {rating.count}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                      <Star className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-700 mb-2">Aucun avis pour le moment</h3>
+                    <p className="text-gray-500 text-sm">
+                      Les premiers avis de vos clients apparaîtront ici.
+                    </p>
+                  </div>
+                )}
 
                 <div className="mt-6 pt-6 border-t border-gray-100 grid grid-cols-2 gap-4 text-center">
                   <div>
@@ -431,7 +446,9 @@ export default function RestaurantPage() {
                     <div className="flex items-center justify-center mb-1">
                       <Clock className="w-4 h-4 mr-1 text-gray-500" />
                     </div>
-                    <p className="text-2xl font-bold" style={{ color: COLORS.text.primary }}>98%</p>
+                    <p className="text-2xl font-bold" style={{ color: COLORS.text.primary }}>
+                      {hasReviews && averageRating >= 4 ? `${Math.round((averageRating / 5) * 100)}%` : '-'}
+                    </p>
                     <p className="text-xs text-gray-500">Satisfaction</p>
                   </div>
                 </div>

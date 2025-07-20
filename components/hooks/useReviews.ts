@@ -2,8 +2,23 @@ import { useState, useEffect, useCallback } from 'react';
 import { ClientReview } from '@/types/review';
 import { fetchWithAuth } from '@/lib/fetchWithAuth';
 
-export function useReviews(restaurantId?: number) {
+interface UseReviewsOptions {
+  page?: number;
+  limit?: number;
+  rating?: number;
+}
+
+interface PaginationData {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  itemsPerPage: number;
+}
+
+export function useReviews(restaurantId?: number, options: UseReviewsOptions = {}) {
+  const { page = 1, limit = 10, rating } = options;
   const [reviews, setReviews] = useState<ClientReview[]>([]);
+  const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,7 +29,16 @@ export function useReviews(restaurantId?: number) {
       setLoading(true);
       setError(null);
       
-      const response = await fetchWithAuth(`/api/proxy/client-review-restaurant/${restaurantId}`);
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+      });
+      
+      if (rating !== undefined) {
+        queryParams.set('rating', rating.toString());
+      }
+      
+      const response = await fetchWithAuth(`/api/proxy/client-review-restaurant/${restaurantId}?${queryParams.toString()}`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch reviews');
@@ -34,13 +58,23 @@ export function useReviews(restaurantId?: number) {
       } else {
         setReviews([]);
       }
+      
+      // Handle pagination metadata
+      if (data.pagination) {
+        setPagination({
+          currentPage: data.pagination.current_page,
+          totalPages: data.pagination.last_page,
+          totalItems: data.pagination.total,
+          itemsPerPage: data.pagination.per_page,
+        });
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch reviews');
       setReviews([]);
     } finally {
       setLoading(false);
     }
-  }, [restaurantId]);
+  }, [restaurantId, page, limit, rating]);
 
   const calculateStats = () => {
     if (reviews.length === 0) {
@@ -69,10 +103,11 @@ export function useReviews(restaurantId?: number) {
 
   useEffect(() => {
     fetchReviews();
-  }, [restaurantId, fetchReviews]);
+  }, [fetchReviews]);
 
   return {
     reviews,
+    pagination,
     loading,
     error,
     fetchReviews,

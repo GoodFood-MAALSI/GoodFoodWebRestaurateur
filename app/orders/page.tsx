@@ -1,22 +1,32 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useAllRestaurantOrders } from "@/components/hooks/useAllRestaurantOrders";
 import OrdersList from "@/components/ui/GoodFood/orders/OrdersList";
+import { Pagination } from "@/components/ui/GoodFood/pagination/Pagination";
 import { Toaster } from "@/components/ui/shadcn/sonner";
 import { toast } from "sonner";
 import { COLORS, ORDER_STATUS_COLORS, ORDER_STATUS_TEXT_COLORS } from "@/app/constants";
 import { OrderStatusType } from "@/types/order";
 
 export default function OrdersPage() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [statusFilter, setStatusFilter] = useState<number | undefined>(undefined);
+
   const { 
     restaurantOrders, 
     allOrders, 
+    allOrdersPagination,
     loading, 
     error, 
     refetch, 
     updateOrderStatus 
-  } = useAllRestaurantOrders(13);
+  } = useAllRestaurantOrders(13, {
+    page: currentPage,
+    limit: itemsPerPage,
+    statusId: statusFilter,
+  });
 
   const handleStatusChange = async (orderId: number, status: OrderStatusType) => {
     try {
@@ -26,6 +36,20 @@ export default function OrdersPage() {
       toast.error("Erreur lors de la mise à jour");
       throw error;
     }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (limit: number) => {
+    setItemsPerPage(limit);
+    setCurrentPage(1); // Reset to first page when changing limit
+  };
+
+  const handleStatusFilterChange = (statusId: number | undefined) => {
+    setStatusFilter(statusId);
+    setCurrentPage(1); // Reset to first page when changing filter
   };
 
   const getStatusString = (status: unknown): string => {
@@ -77,6 +101,76 @@ export default function OrdersPage() {
           <p className="text-gray-600 mt-2">
             Suivez et gérez toutes vos commandes en temps réel
           </p>
+          
+          {/* Status Filter Buttons */}
+          <div className="mt-6 flex flex-wrap gap-3">
+            <button
+              onClick={() => handleStatusFilterChange(undefined)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                statusFilter === undefined
+                  ? 'bg-gray-900 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Toutes les commandes
+            </button>
+            <button
+              onClick={() => handleStatusFilterChange(1)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                statusFilter === 1
+                  ? 'text-white'
+                  : 'hover:opacity-80'
+              }`}
+              style={{
+                backgroundColor: statusFilter === 1 ? ORDER_STATUS_COLORS.pending : ORDER_STATUS_COLORS.pending,
+                color: statusFilter === 1 ? 'white' : ORDER_STATUS_TEXT_COLORS.pending,
+              }}
+            >
+              En attente
+            </button>
+            <button
+              onClick={() => handleStatusFilterChange(2)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                statusFilter === 2
+                  ? 'text-white'
+                  : 'hover:opacity-80'
+              }`}
+              style={{
+                backgroundColor: statusFilter === 2 ? ORDER_STATUS_COLORS.accepted : ORDER_STATUS_COLORS.accepted,
+                color: statusFilter === 2 ? 'white' : ORDER_STATUS_TEXT_COLORS.accepted,
+              }}
+            >
+              Acceptées
+            </button>
+            <button
+              onClick={() => handleStatusFilterChange(3)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                statusFilter === 3
+                  ? 'text-white'
+                  : 'hover:opacity-80'
+              }`}
+              style={{
+                backgroundColor: statusFilter === 3 ? ORDER_STATUS_COLORS.preparing : ORDER_STATUS_COLORS.preparing,
+                color: statusFilter === 3 ? 'white' : ORDER_STATUS_TEXT_COLORS.preparing,
+              }}
+            >
+              En préparation
+            </button>
+            <button
+              onClick={() => handleStatusFilterChange(5)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                statusFilter === 5
+                  ? 'text-white'
+                  : 'hover:opacity-80'
+              }`}
+              style={{
+                backgroundColor: statusFilter === 5 ? ORDER_STATUS_COLORS.delivered : ORDER_STATUS_COLORS.delivered,
+                color: statusFilter === 5 ? 'white' : ORDER_STATUS_TEXT_COLORS.delivered,
+              }}
+            >
+              Livrées
+            </button>
+          </div>
         </div>
 
         {!loading && allOrders.length > 0 && (
@@ -115,7 +209,9 @@ export default function OrdersPage() {
         {loading && (
           <div className="flex justify-center items-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            <span className="ml-3">Chargement des commandes...</span>
+            <span className="ml-3">
+              {currentPage > 1 ? `Chargement de la page ${currentPage}...` : "Chargement des commandes..."}
+            </span>
           </div>
         )}
 
@@ -144,9 +240,25 @@ export default function OrdersPage() {
               error={error}
               onRefresh={refetch}
               onStatusChange={handleStatusChange}
-              title="Toutes les commandes"
+              title={`Toutes les commandes${statusFilter ? ' filtrées' : ''}`}
               showRestaurantFilter={true}
             />
+            
+            {/* Pagination Controls */}
+            {allOrdersPagination && allOrdersPagination.totalPages > 1 && (
+              <div className="mt-8 bg-white rounded-xl shadow-sm border p-6">
+                <Pagination
+                  currentPage={allOrdersPagination.currentPage}
+                  totalPages={allOrdersPagination.totalPages}
+                  totalItems={allOrdersPagination.totalItems}
+                  itemsPerPage={allOrdersPagination.itemsPerPage}
+                  onPageChange={handlePageChange}
+                  onItemsPerPageChange={handleItemsPerPageChange}
+                  disabled={loading}
+                  showItemsPerPage={true}
+                />
+              </div>
+            )}
           </div>
         )}
 

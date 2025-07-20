@@ -19,6 +19,28 @@ export interface OrderItem {
   }[];
 }
 
+// Detailed order item structure from the order details API
+export interface DetailedOrderItem {
+  id: number;
+  order_id: number;
+  menu_item_id: number;
+  quantity: number;
+  unit_price: string;
+  notes: string;
+  selected_option_value_ids: string[];
+  menu_item: {
+    id: number;
+    name: string;
+    price: string;
+    promotion: string;
+  };
+  menu_item_option_values: {
+    id: number;
+    name: string;
+    extra_price: string;
+  }[];
+}
+
 export interface OrderStatus {
   id: number;
   name: string;
@@ -104,6 +126,34 @@ export interface Order {
     email: string;
     phone_number?: string;
   };
+}
+
+// Detailed order interface for the order details modal
+export interface DetailedOrder {
+  id: number;
+  client_id: number;
+  restaurant_id: number;
+  deliverer_id: number | null;
+  status_id: number;
+  description: string;
+  subtotal: string;
+  delivery_costs: string;
+  service_charge: string;
+  global_discount: string;
+  street_number: string;
+  street: string;
+  city: string;
+  postal_code: string;
+  country: string;
+  long: string;
+  lat: string;
+  created_at: string;
+  updated_at: string;
+  status: OrderStatus;
+  orderItems: DetailedOrderItem[];
+  client: OrderClient;
+  restaurant: OrderRestaurant;
+  deliverer: OrderDeliverer | null;
 }
 
 export type OrderStatusType = "pending" | "accepted" | "preparing" | "ready" | "delivered" | "cancelled";
