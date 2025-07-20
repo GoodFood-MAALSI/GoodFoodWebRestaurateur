@@ -1,6 +1,5 @@
 import { MapPin, Star, Clock } from "lucide-react";
 import { COLORS } from "@/app/constants";
-
 interface RestaurantCardProps {
   name: string;
   description: string;
@@ -10,7 +9,6 @@ interface RestaurantCardProps {
   reviewCount?: number;
   onClick?: () => void;
 }
-
 export const RestaurantCard = ({ 
   name, 
   description, 
@@ -65,7 +63,6 @@ export const RestaurantCard = ({
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
-
       <div className="p-6">
         <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-green-600 transition-colors duration-200">
           {name}
@@ -73,7 +70,6 @@ export const RestaurantCard = ({
         <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
           {description}
         </p>
-        
         <div className="flex items-center justify-between text-sm text-gray-500">
           <div className="flex items-center gap-1">
             <MapPin className="w-4 h-4" />

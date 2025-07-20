@@ -1,7 +1,5 @@
 export const URL_API = 'http://localhost:8080/restaurateur/api/';
-
 import { RestaurantFormValues } from "./schema";
-
 export const defaultRestaurantValues: RestaurantFormValues = {
   name: "Nom du restaurant",
   description: "Un restaurant fantastique avec des plats succulents.",
@@ -16,7 +14,6 @@ export const defaultRestaurantValues: RestaurantFormValues = {
   restaurantTypeId: "",
   is_open: false,
 };
-
 export const restaurantFormFields = [
   { name: "name", label: "Nom du restaurant", type: "text" },
   { name: "description", label: "Description", type: "text" },

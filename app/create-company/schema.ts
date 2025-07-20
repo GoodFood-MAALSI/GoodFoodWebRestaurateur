@@ -1,5 +1,4 @@
 import * as z from "zod";
-
 export const restaurantSchema = z.object({
   name: z
     .string()
@@ -20,8 +19,6 @@ export const restaurantSchema = z.object({
   phone_number: z.string().regex(/^\d{9,15}$/, "Numéro de téléphone invalide"),
   siret: z.string().min(1, "Le SIRET est obligatoire"),
   restaurantTypeId: z.string().min(1, "Le type de restaurant est requis"),
-
   is_open: z.boolean().default(false),
 });
-
 export type RestaurantFormValues = z.infer<typeof restaurantSchema>;

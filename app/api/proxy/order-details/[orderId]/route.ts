@@ -24,7 +24,6 @@ export async function GET(
 
     if (!backendRes.ok) {
       const errorData = await backendRes.text();
-      console.error(`Failed to fetch order ${orderId}:`, errorData);
       return NextResponse.json(
         { error: `Failed to fetch order details: ${backendRes.status}` }, 
         { status: backendRes.status }
@@ -34,7 +33,6 @@ export async function GET(
     const data = await backendRes.json();
     return NextResponse.json(data, { status: backendRes.status });
   } catch (error) {
-    console.error("Error fetching order details:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

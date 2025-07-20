@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import {
   Dialog,
@@ -22,11 +21,9 @@ import {
 import { useForgotPassword } from "@/components/hooks/useForgotPassword";
 import { loginTexts } from "@/app/auth/constants";
 import { COLORS } from "@/app/constants";
-
 export function ForgotPasswordModal() {
   const [open, setOpen] = useState(false);
   const { form, handleSubmit, onSubmit, emailSent } = useForgotPassword(() => setOpen(false));
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -45,7 +42,6 @@ export function ForgotPasswordModal() {
             {loginTexts.forgotPassword.modal.description}
           </DialogDescription>
         </DialogHeader>
-
         {emailSent ? (
           <p style={{ color: COLORS.success }} className="mt-4">
             {loginTexts.forgotPassword.modal.success}

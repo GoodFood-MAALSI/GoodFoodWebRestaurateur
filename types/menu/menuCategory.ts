@@ -1,5 +1,4 @@
 import { MenuItem } from "./menuItem";
-
 export interface MenuCategory {
   id: number;
   name: string;

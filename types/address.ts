@@ -1,4 +1,3 @@
-
 export interface AddressFeature {
   geometry: {
     coordinates: [number, number];
@@ -10,7 +9,6 @@ export interface AddressFeature {
     id: string;
   };
 }
-
 export interface AddressAPIResponse {
   features: AddressFeature[];
 }

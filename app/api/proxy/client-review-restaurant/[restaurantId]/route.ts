@@ -52,7 +52,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       links
     });
   } catch (error) {
-    console.error('Error fetching reviews:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -11,7 +11,6 @@ import { MenuItemOption } from "@/types/menu/menuItemOption";
 import { MenuItemOptionValue } from "@/types/menu/menuItemOptionValue";
 import { COLORS } from "@/app/constants";
 import { getMenuItemImageUrl } from "@/lib/imageUtils";
-
 interface MenuItemModalProps {
   item: MenuItem;
   open: boolean;
@@ -19,7 +18,6 @@ interface MenuItemModalProps {
   onUpdate: (updatedItem: MenuItem) => void;
   onDelete?: (itemId: number) => void;
 }
-
 const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUpdate, onDelete }) => {
   const [activeTab, setActiveTab] = useState("item");
   const [editingItem, setEditingItem] = useState(item);
@@ -31,13 +29,9 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const [isLocalImagePreview, setIsLocalImagePreview] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   useEffect(() => {
     setEditingItem(item);
-    
-    // Get image URL using the utility function
     const imageUrl = getMenuItemImageUrl(item);
-    
     if (imageUrl && imageUrl !== "/GoodFood/logo.png") {
       setImagePreview(imageUrl);
       setIsLocalImagePreview(false);
@@ -46,18 +40,15 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
       setIsLocalImagePreview(false);
     }
   }, [item]);
-
   const getNewValueForOption = (optionId: number) => {
     return newValues[optionId] || {};
   };
-
   const updateNewValueForOption = (optionId: number, updates: Partial<MenuItemOptionValue>) => {
     setNewValues(prev => ({
       ...prev,
       [optionId]: { ...prev[optionId], ...updates }
     }));
   };
-
   const clearNewValueForOption = (optionId: number) => {
     setNewValues(prev => {
       const newState = { ...prev };
@@ -65,7 +56,6 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
       return newState;
     });
   };
-
   const handleUpdateItem = async () => {
     try {
       const payload = {
@@ -77,15 +67,12 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
         position: editingItem.position,
         menuCategoryId: editingItem.menuCategoryId,
       };
-
       const response = await fetch(`/api/proxy/menu-items/${item.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
       if (!response.ok) throw new Error("Échec de la mise à jour");
-      
       const result = await response.json();
       const updatedItemWithImage = { 
         ...(result.data || result), 
@@ -93,29 +80,22 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
       };
       onUpdate(updatedItemWithImage);
     } catch (error) {
-      console.error("Error updating item:", error);
     }
   };
-
   const handleDeleteItem = async () => {
     if (!confirm("Êtes-vous sûr de vouloir supprimer cet article ?")) return;
-    
     try {
       const response = await fetch(`/api/proxy/menu-items/${item.id}`, {
         method: "DELETE",
       });
-
       if (!response.ok) throw new Error("Échec de la suppression");
-      
       if (onDelete) {
         onDelete(item.id);
       }
       onClose();
     } catch (error) {
-      console.error("Error deleting item:", error);
     }
   };
-
   const handleCreateOption = async () => {
     try {
       const payload = {
@@ -125,29 +105,22 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
         position: newOption.position || 1,
         menuItemId: item.id,
       };
-
       const response = await fetch("/api/proxy/menu-item-options", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
       if (!response.ok) throw new Error("Échec de la création");
-      
       const result = await response.json();
       const createdOption = result.data || result;
-      
       setEditingItem(prev => ({
         ...prev,
         menuItemOptions: [...(prev.menuItemOptions || []), createdOption]
       }));
-      
       setNewOption({});
     } catch (error) {
-      console.error("Error creating option:", error);
     }
   };
-
   const handleUpdateOption = async (option: MenuItemOption) => {
     try {
       const payload = {
@@ -156,50 +129,38 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
         is_multiple_choice: option.is_multiple_choice,
         position: option.position,
       };
-
       const response = await fetch(`/api/proxy/menu-item-options/${option.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
       if (!response.ok) throw new Error("Échec de la mise à jour");
-      
       setEditingItem(prev => ({
         ...prev,
         menuItemOptions: prev.menuItemOptions?.map(opt => 
           opt.id === option.id ? option : opt
         ) || []
       }));
-      
       setEditingOption(null);
     } catch (error) {
-      console.error("Error updating option:", error);
     }
   };
-
   const handleDeleteOption = async (optionId: number) => {
     if (!confirm("Êtes-vous sûr de vouloir supprimer cette option ?")) return;
-    
     try {
       const response = await fetch(`/api/proxy/menu-item-options/${optionId}`, {
         method: "DELETE",
       });
-
       if (!response.ok) throw new Error("Échec de la suppression");
-      
       setEditingItem(prev => ({
         ...prev,
         menuItemOptions: prev.menuItemOptions?.filter(opt => opt.id !== optionId) || []
       }));
     } catch (error) {
-      console.error("Error deleting option:", error);
     }
   };
-
   const handleCreateValue = async (optionId: number) => {
     const currentNewValue = getNewValueForOption(optionId);
-    
     try {
       const payload = {
         name: currentNewValue.name,
@@ -207,18 +168,14 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
         position: currentNewValue.position || 1,
         menuItemOptionId: optionId,
       };
-
       const response = await fetch("/api/proxy/menu-item-option-values", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
       if (!response.ok) throw new Error("Échec de la création");
-      
       const result = await response.json();
       const createdValue = result.data || result;
-      
       setEditingItem(prev => ({
         ...prev,
         menuItemOptions: prev.menuItemOptions?.map(option => 
@@ -227,23 +184,17 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
             : option
         ) || []
       }));
-      
       clearNewValueForOption(optionId);
     } catch (error) {
-      console.error("Error creating value:", error);
     }
   };
-
   const handleDeleteValue = async (valueId: number, optionId: number) => {
     if (!confirm("Êtes-vous sûr de vouloir supprimer cette valeur ?")) return;
-    
     try {
       const response = await fetch(`/api/proxy/menu-item-option-values/${valueId}`, {
         method: "DELETE",
       });
-
       if (!response.ok) throw new Error("Échec de la suppression");
-      
       setEditingItem(prev => ({
         ...prev,
         menuItemOptions: prev.menuItemOptions?.map(option => 
@@ -253,118 +204,86 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
         ) || []
       }));
     } catch (error) {
-      console.error("Error deleting value:", error);
     }
   };
-
   const handleImageUpload = async (file: File) => {
     if (!file) return;
-
     setIsUploadingImage(true);
     try {
       const formData = new FormData();
       formData.append("image", file);
-
       const response = await fetch(`/api/proxy/menu-items/${item.id}/upload-image`, {
         method: "POST",
         body: formData,
       });
-
       if (!response.ok) throw new Error("Échec du téléchargement");
-      
       const result = await response.json();
-      console.log("Upload result:", result);
-      
       const imageUrl = result.image_url || result.picture || result.imageUrl;
       if (imageUrl) {
         const updatedItem = { ...editingItem, picture: imageUrl };
         setEditingItem(updatedItem);
         setImagePreview(imageUrl);
         setIsLocalImagePreview(false);
-        console.log("Updated with server image URL:", imageUrl);
-      } else {
-        console.warn("No image URL found in upload response:", result);
       }
     } catch (error) {
-      console.error("Error uploading image:", error);
       alert("Erreur lors du téléchargement de l'image");
     } finally {
       setIsUploadingImage(false);
     }
   };
-
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
     if (!file.type.startsWith('image/')) {
       alert('Veuillez sélectionner un fichier image valide');
       return;
     }
-
     if (file.size > 5 * 1024 * 1024) {
       alert('La taille du fichier ne doit pas dépasser 5MB');
       return;
     }
-
-    console.log('Selected file:', file.name, file.type, file.size);
-
     const reader = new FileReader();
     reader.onload = (e) => {
       const result = e.target?.result as string;
-      console.log('FileReader result length:', result?.length);
-      console.log('FileReader result type:', typeof result);
-      console.log('FileReader result preview:', result?.substring(0, 50) + '...');
       setImagePreview(result);
       setIsLocalImagePreview(true); 
     };
-    reader.onerror = (e) => {
-      console.error('FileReader error:', e);
+    reader.onerror = () => {
       alert('Erreur lors de la lecture du fichier');
     };
     reader.readAsDataURL(file);
     handleImageUpload(file);
     event.target.value = '';
   };
-
   const triggerFileSelect = () => {
     fileInputRef.current?.click();
   };
-
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDraggingFile(true);
   };
-
   const handleDragLeave = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDraggingFile(false);
   };
-
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDraggingFile(false);
-    
     const files = e.dataTransfer.files;
     if (files && files[0]) {
       const file = files[0];
-      console.log('Dropped file:', file.name, file.type, file.size);
-      
       if (file.type.startsWith('image/')) {
         if (file.size <= 5 * 1024 * 1024) {
           const reader = new FileReader();
           reader.onload = (e) => {
             const result = e.target?.result as string;
-            console.log('Drag drop FileReader result length:', result?.length);
             setImagePreview(result);
             setIsLocalImagePreview(true);
           };
-          reader.onerror = (e) => {
-            console.error('Drag drop FileReader error:', e);
+          reader.onerror = () => {
             alert('Erreur lors de la lecture du fichier');
           };
           reader.readAsDataURL(file);
-          
           handleImageUpload(file);
         } else {
           alert('La taille du fichier ne doit pas dépasser 5MB');
@@ -374,7 +293,6 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
       }
     }
   };
-
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent 
@@ -391,7 +309,6 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
             Gérez les détails de l&apos;article, ses options et ses valeurs d&apos;options. Utilisez les onglets pour naviguer entre les différentes sections.
           </DialogDescription>
         </DialogHeader>
-
         <div className={`grid grid-cols-1 gap-6 ${activeTab === "item" ? "lg:grid-cols-4" : "lg:grid-cols-1"}`}>
           <div className={`space-y-4 ${activeTab === "item" ? "lg:col-span-3" : "lg:col-span-1"}`}>
             <div className="flex border-b border-gray-200">
@@ -426,7 +343,6 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                 Valeurs
               </button>
             </div>
-
           {activeTab === "item" && (
             <div className="space-y-8">
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
@@ -440,7 +356,6 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                   </div>
                 </div>
               </div>
-
               <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
@@ -474,7 +389,6 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                     />
                   </div>
                 </div>
-                
                 <div className="mt-6">
                   <Label htmlFor="description" className="text-sm font-medium text-gray-700 mb-2 block">
                     Description
@@ -489,7 +403,6 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                   <p className="text-xs text-gray-500 mt-1">Une bonne description aide vos clients à faire leur choix</p>
                 </div>
               </div>
-
               <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                   <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
@@ -534,7 +447,6 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                     <p className="text-xs text-gray-500 mt-1">Laissez vide si aucune promotion</p>
                   </div>
                 </div>
-                
                 {editingItem.price && (
                   <div className="mt-4 p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-center justify-between">
@@ -556,7 +468,6 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                   </div>
                 )}
               </div>
-
               <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                   <span className="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
@@ -586,7 +497,6 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                   />
                 </div>
               </div>
-
               <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <div className="flex flex-col sm:flex-row gap-3 justify-end">
                   <Button 
@@ -612,7 +522,6 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
               </div>
             </div>
           )}
-
           {activeTab === "options" && (
             <div className="space-y-6">
               <div className="border-l-4 border-green-400 bg-green-50 rounded-lg p-4">
@@ -670,7 +579,6 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                   </Button>
                 </div>
               </div>
-
               {editingItem.menuItemOptions && editingItem.menuItemOptions.length > 0 ? (
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-4">Options existantes ({editingItem.menuItemOptions.length})</h3>
@@ -772,12 +680,10 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
               )}
             </div>
           )}
-
           {activeTab === "values" && (
             <div className="space-y-6">
               {editingItem.menuItemOptions?.map((option) => {
                 const currentNewValue = getNewValueForOption(option.id);
-                
                 return (
                   <div key={option.id} className="border rounded-lg overflow-hidden">
                     <div className="bg-gray-100 px-4 py-3 border-b">
@@ -792,7 +698,6 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                         {option.is_multiple_choice ? " Choix multiple" : " Choix unique"}
                       </p>
                     </div>
-                    
                     <div className="p-4 space-y-4">
                       <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-400">
                         <h4 className="font-medium text-blue-800 mb-3">Ajouter une nouvelle valeur</h4>
@@ -842,7 +747,6 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                           </Button>
                         </div>
                       </div>
-
                       {option.menuItemOptionValues && option.menuItemOptionValues.length > 0 ? (
                         <div>
                           <h4 className="font-medium text-gray-800 mb-3">Valeurs existantes</h4>
@@ -898,7 +802,6 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
             </div>
           )}
           </div>
-
           {activeTab === "item" && (
             <div className="lg:col-span-1">
               <div className="sticky top-4">
@@ -907,7 +810,6 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                     <ImageIcon className="w-5 h-5 mr-2" />
                     Image de l&apos;article
                   </h3>
-                  
                   <div className="mb-4">
                     {imagePreview ? (
                       <div 
@@ -929,16 +831,12 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                             display: 'block'
                           }}
                           onLoad={() => {
-                            console.log('Image loaded successfully:', imagePreview);
                           }}
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
-                            console.error('Image failed to load:', imagePreview);
-                            console.error('Error details:', e);
                             if (target.src !== '/food/cheeseburger.jpg') {
                               target.src = '/food/cheeseburger.jpg';
                             } else {
-                              console.error('Even fallback image failed to load');
                               setImagePreview(null);
                             }
                           }}
@@ -992,21 +890,18 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                       </div>
                     )}
                   </div>
-
                   {isUploadingImage && (
                     <div className="flex items-center justify-center p-2 bg-blue-50 rounded-lg text-blue-700 text-sm mb-2">
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-700 mr-2"></div>
                       Téléchargement en cours...
                     </div>
                   )}
-
                   {isLocalImagePreview && !isUploadingImage && (
                     <div className="flex items-center justify-center p-2 bg-yellow-50 rounded-lg text-yellow-700 text-sm mb-2">
                       <span className="text-yellow-600 mr-2">⚠️</span>
                       Aperçu local - L&apos;image sera sauvegardée lors de la validation
                     </div>
                   )}
-
                   {imagePreview && (
                     <div className="text-xs text-gray-400 mt-2 p-2 bg-gray-50 rounded">
                       <p><strong>Debug Info:</strong></p>
@@ -1018,14 +913,12 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
                       )}
                     </div>
                   )}
-
                   <div className="text-xs text-gray-500 mt-4">
                     <p>• Glissez-déposez ou cliquez pour ajouter</p>
                     <p>• Format acceptés: JPG, PNG, GIF</p>
                     <p>• Taille maximale: 5MB</p>
                     <p>• Recommandé: 400x300px minimum</p>
                   </div>
-
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -1042,5 +935,4 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, open, onClose, onUp
     </Dialog>
   );
 };
-
 export default MenuItemModal;

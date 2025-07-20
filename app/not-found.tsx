@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/shadcn/button";
-
 export default function NotFound() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-gray-100 text-center p-6">

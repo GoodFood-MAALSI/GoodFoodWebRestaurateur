@@ -1,5 +1,4 @@
 import { MenuItemOptionValue } from "./menuItemOptionValue";
-
 export interface MenuItemOption {
   id: number;
   name: string;

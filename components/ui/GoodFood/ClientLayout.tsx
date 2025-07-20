@@ -1,10 +1,8 @@
 "use client";
-
 import { usePathname } from "next/navigation";
 import "@/app/globals.css";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-
 export default function ClientLayout({
   children,
 }: Readonly<{
@@ -13,9 +11,8 @@ export default function ClientLayout({
   const pathname = usePathname();
   const hideNavbarRoutes = ["/", "/create-company", "/auth"];
   const showNavbar = !hideNavbarRoutes.includes(pathname);
-
   return (
-    <html lang="fr" className="h-full">
+    <html lang="fr" className="h-full" data-scroll-behavior="smooth">
       <body className="antialiased h-full flex flex-col">
         <Header showNavbar={showNavbar} />
         <main className="flex-grow">{children}</main>

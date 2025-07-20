@@ -5,10 +5,8 @@ import { forgotPasswordSchema } from "@/lib/validators/auth";
 import type { ForgotPasswordForm } from "@/types/auth";
 import { loginTexts } from "@/app/auth/constants";
 import { toast } from "sonner";
-
 export function useForgotPassword(onClose?: () => void) {
   const [emailSent, setEmailSent] = useState(false);
-
   const form = useForm<ForgotPasswordForm>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
@@ -16,7 +14,6 @@ export function useForgotPassword(onClose?: () => void) {
     },
     mode: "onSubmit",
   });
-
   const onSubmit = async (data: ForgotPasswordForm) => {
     try {
       const res = await fetch(`/api/auth/forgot-password`, {
@@ -26,15 +23,12 @@ export function useForgotPassword(onClose?: () => void) {
         },
         body: JSON.stringify({ email: data.email }),
       });
-
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || loginTexts.error.default);
       }
-
       toast.success("Lien de réinitialisation envoyé.");
       setEmailSent(true);
-
       setTimeout(() => {
         onClose?.();
         form.reset();
@@ -48,7 +42,6 @@ export function useForgotPassword(onClose?: () => void) {
       toast.error(message);
     }
   };
-
   return {
     form,
     onSubmit,

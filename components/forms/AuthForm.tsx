@@ -1,5 +1,4 @@
 "use client";
-
 import { useAuthForm } from "@/components/hooks/useAuthForm";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/shadcn/form";
 import { Input } from "@/components/ui/shadcn/input";
@@ -10,11 +9,9 @@ import { COLORS } from "@/app/constants";
 import { ForgotPasswordModal } from "@/components/forms/forgotPasswordModal";
 import { Mail, Lock, LogIn, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-
 export default function AuthForm() {
   const { form, handleSubmit, onSubmit } = useAuthForm();
   const [showPassword, setShowPassword] = useState(false);
-
   return (
     <>
       <Toaster />
@@ -31,7 +28,6 @@ export default function AuthForm() {
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Connexion</h1>
         <p className="text-gray-600">Connectez-vous à votre espace restaurateur</p>
       </div>
-
       <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -69,7 +65,6 @@ export default function AuthForm() {
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="password"
@@ -115,7 +110,6 @@ export default function AuthForm() {
                 </FormItem>
               )}
             />
-
             <div className="space-y-4">
               <Button
                 type="submit"
@@ -133,7 +127,6 @@ export default function AuthForm() {
                 <LogIn className="w-5 h-5 mr-2" />
                 {loginTexts.submitButton}
               </Button>
-              
               <div className="text-center">
                 <ForgotPasswordModal />
               </div>

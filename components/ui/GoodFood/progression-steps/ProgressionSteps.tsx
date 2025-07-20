@@ -1,10 +1,8 @@
 import React from "react";
-
 interface ProgressionStepsProps {
   steps: string[];
   current: number;
 }
-
 export default function ProgressionSteps({ steps, current }: ProgressionStepsProps) {
   return (
     <div className="flex items-center justify-between mb-4">

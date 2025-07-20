@@ -4,7 +4,6 @@ export interface MenuItem {
   price: string;
   promotion: string;
 }
-
 export interface RestaurantStats {
   order_count: number;
   menu_item_id: number;
@@ -12,7 +11,6 @@ export interface RestaurantStats {
   item_count: number;
   revenue: number;
 }
-
 export interface StatsResponse {
   statusCode: number;
   message: string;

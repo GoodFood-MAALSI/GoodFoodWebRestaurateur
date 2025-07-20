@@ -15,7 +15,6 @@ import { ORDER_STATUS_COLORS } from "@/app/constants";
 import { ORDER_STATUS_LABELS } from "@/app/orders/constants";
 import { Clock, MapPin, User, Phone, Mail, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-
 interface OrderDetailModalProps {
   order: Order | null;
   isOpen: boolean;
@@ -23,10 +22,8 @@ interface OrderDetailModalProps {
   onStatusChange: (orderId: number, status: OrderStatusType) => Promise<void>;
   onOrderUpdate?: (updatedOrder: Order) => void;
 }
-
 const statusColors: Record<string, string> = ORDER_STATUS_COLORS;
 const statusLabels: Record<string, string> = ORDER_STATUS_LABELS;
-
 export default function OrderDetailModal({
   order,
   isOpen,
@@ -37,10 +34,7 @@ export default function OrderDetailModal({
   const [currentOrder, setCurrentOrder] = useState<Order | null>(order);
   const [notes, setNotes] = useState(order?.notes || "");
   const [loading, setLoading] = useState(false);
-  
   const { orderDetails, loading: detailsLoading, error: detailsError, fetchOrderDetails, clearOrderDetails } = useOrderDetails();
-
-  // Fetch detailed order information when modal opens
   useEffect(() => {
     if (isOpen && order) {
       fetchOrderDetails(order.id);
@@ -48,38 +42,28 @@ export default function OrderDetailModal({
       clearOrderDetails();
     }
   }, [isOpen, order?.id]);
-
   useEffect(() => {
     setCurrentOrder(order);
     setNotes(order?.notes || "");
   }, [order]);
-
   if (!currentOrder) return null;
-
-  // Use detailed order if available, fallback to basic order
   const displayOrder = orderDetails || currentOrder;
-
   const getStatusString = (status: unknown): string => {
     if (typeof status === 'object' && status !== null && 'name' in status) {
       return String((status as { name: string }).name).toLowerCase();
     }
     return String(status).toLowerCase();
   };
-
   const handleStatusChange = async (newStatus: OrderStatusType) => {
     if (!currentOrder) return;
-    
     try {
       setLoading(true);
       await onStatusChange(currentOrder.id, newStatus);
-      
       const updatedOrder = { ...currentOrder, status: { name: newStatus } as OrderStatus };
       setCurrentOrder(updatedOrder);
-      
       if (onOrderUpdate) {
         onOrderUpdate(updatedOrder);
       }
-      
       toast.success("Statut mis à jour");
     } catch {
       toast.error("Erreur lors de la mise à jour");
@@ -87,7 +71,6 @@ export default function OrderDetailModal({
       setLoading(false);
     }
   };
-
   const calculateTotal = () => {
     if (!displayOrder) return 0;
     const subtotal = parseFloat(displayOrder.subtotal);
@@ -96,10 +79,8 @@ export default function OrderDetailModal({
     const discount = parseFloat(displayOrder.global_discount);
     return subtotal + deliveryCosts + serviceCharge - discount;
   };
-
   const currentStatusString = getStatusString(displayOrder.status);
   const deliveryAddress = `${displayOrder.street_number} ${displayOrder.street}, ${displayOrder.city} ${displayOrder.postal_code}`;
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
@@ -114,20 +95,17 @@ export default function OrderDetailModal({
             Détails de la commande et gestion du statut. Vous pouvez mettre à jour le statut de la commande ci-dessous.
           </DialogDescription>
         </DialogHeader>
-
         {detailsLoading && (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="w-6 h-6 animate-spin mr-2" />
             <span>Chargement des détails de la commande...</span>
           </div>
         )}
-
         {detailsError && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
             <p className="text-red-600">{detailsError}</p>
           </div>
         )}
-
         <div className="space-y-6">
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold mb-3">Informations client</h3>
@@ -180,7 +158,6 @@ export default function OrderDetailModal({
               )}
             </div>
           </div>
-
           <div>
             <h3 className="font-semibold mb-3">Articles commandés</h3>
             {orderDetails && orderDetails.orderItems && orderDetails.orderItems.length > 0 ? (
@@ -200,7 +177,6 @@ export default function OrderDetailModal({
                           )}
                         </div>
                       </div>
-                      
                       {item.menu_item_option_values && item.menu_item_option_values.length > 0 && (
                         <div className="mt-2 ml-3">
                           <div className="text-sm text-gray-600">
@@ -233,7 +209,6 @@ export default function OrderDetailModal({
               ))}
               </div>
             ) : currentOrder.orderItems && currentOrder.orderItems.length > 0 ? (
-              // Fallback to basic order items if detailed items are not available
               <div className="space-y-3">
                 {currentOrder.orderItems.map((item, index) => (
                 <div key={index} className="border rounded-lg p-3">
@@ -261,7 +236,6 @@ export default function OrderDetailModal({
                           </p>
                         </div>
                       </div>
-                      
                       {'selectedOptions' in item && item.selectedOptions?.length > 0 && (
                         <div className="mt-2 ml-15">
                           {item.selectedOptions.map((option: any, optIndex: number) => (
@@ -302,7 +276,6 @@ export default function OrderDetailModal({
               </div>
             )}
           </div>
-
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="space-y-2">
               <div className="flex justify-between">
@@ -327,7 +300,6 @@ export default function OrderDetailModal({
               </div>
             </div>
           </div>
-
           <div>
             <h3 className="font-semibold mb-2">Notes</h3>
             <Textarea
@@ -337,7 +309,6 @@ export default function OrderDetailModal({
               rows={3}
             />
           </div>
-
           <div className="flex flex-wrap gap-2">
             {(currentStatusString.includes("attente") || currentStatusString === "pending") && (
               <>
@@ -358,7 +329,6 @@ export default function OrderDetailModal({
                 </Button>
               </>
             )}
-            
             {currentStatusString === "accepted" && (
               <Button 
                 onClick={() => handleStatusChange("preparing")}
@@ -369,7 +339,6 @@ export default function OrderDetailModal({
                 Commencer la préparation
               </Button>
             )}
-            
             {currentStatusString === "preparing" && (
               <Button 
                 onClick={() => handleStatusChange("ready")}
@@ -380,7 +349,6 @@ export default function OrderDetailModal({
                 Marquer comme prête
               </Button>
             )}
-            
             {currentStatusString === "ready" && (
               <Button 
                 onClick={() => handleStatusChange("delivered")}

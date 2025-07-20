@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/shadcn/carousel";
 import { User, Camera, Info, ShieldCheck, Upload } from "lucide-react";
 import { COLORS } from "@/app/constants";
-
 const defaultSteps = [
   {
     id: 1,
@@ -44,22 +43,18 @@ const defaultSteps = [
     icon: Upload,
   },
 ];
-
 export default function ProfileSetupSteps({ steps = defaultSteps }) {
   const [currentStep, setCurrentStep] = useState(0);
-
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
     }
   };
-
   const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep((prev) => prev - 1);
     }
   };
-
   return (
     <Card className="shadow-lg p-6">
       <CardHeader>

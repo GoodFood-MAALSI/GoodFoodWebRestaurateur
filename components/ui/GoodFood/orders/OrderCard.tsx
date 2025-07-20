@@ -6,16 +6,13 @@ import { Order, OrderStatusType } from "@/types/order";
 import { ORDER_STATUS_COLORS } from "@/app/constants";
 import { ORDER_STATUS_LABELS } from "@/app/orders/constants";
 import { Clock, MapPin, User, Phone, Mail } from "lucide-react";
-
 interface OrderCardProps {
   order: Order;
   onStatusChange: (orderId: number, status: OrderStatusType) => Promise<void>;
   onView: (order: Order) => void;
 }
-
 const statusColors: Record<string, string> = ORDER_STATUS_COLORS;
 const statusLabels: Record<string, string> = ORDER_STATUS_LABELS;
-
 export default function OrderCard({ order, onStatusChange, onView }: OrderCardProps) {
   const getStatusString = (status: unknown): string => {
     if (typeof status === 'object' && status !== null && 'name' in status) {
@@ -23,15 +20,12 @@ export default function OrderCard({ order, onStatusChange, onView }: OrderCardPr
     }
     return String(status).toLowerCase();
   };
-
   const handleStatusChange = async (newStatus: OrderStatusType) => {
     try {
       await onStatusChange(order.id, newStatus);
     } catch (error) {
-      console.error("Error updating order status:", error);
     }
   };
-
   const getNextStatus = (currentStatus: unknown): OrderStatusType | null => {
     const statusString = getStatusString(currentStatus);
     const statusFlow: Record<string, OrderStatusType | null> = {
@@ -45,12 +39,10 @@ export default function OrderCard({ order, onStatusChange, onView }: OrderCardPr
     };
     return statusFlow[statusString] || null;
   };
-
   const currentStatusString = getStatusString(order.status);
   const nextStatus = getNextStatus(order.status);
   const deliveryAddress = `${order.street_number} ${order.street}, ${order.city} ${order.postal_code}`;
   const totalPrice = parseFloat(order.subtotal) + parseFloat(order.delivery_costs) + parseFloat(order.service_charge) - parseFloat(order.global_discount);
-
   return (
     <Card className="hover:shadow-lg transition-shadow cursor-pointer">
       <CardHeader className="pb-3">
@@ -69,7 +61,6 @@ export default function OrderCard({ order, onStatusChange, onView }: OrderCardPr
           </Badge>
         </div>
       </CardHeader>
-      
       <CardContent>
         <div className="space-y-3">
           <div className="flex items-center gap-2">
@@ -83,26 +74,22 @@ export default function OrderCard({ order, onStatusChange, onView }: OrderCardPr
               }
             </span>
           </div>
-          
           <div className="flex items-center gap-2">
             <Mail className="w-4 h-4 text-gray-500" />
             <span className="text-sm">
               {order.client?.email || order.customer?.email || 'Email non disponible'}
             </span>
           </div>
-          
           {order.description && (
             <div className="flex items-start gap-2">
               <Clock className="w-4 h-4 text-gray-500 mt-0.5" />
               <span className="text-sm text-gray-600">{order.description}</span>
             </div>
           )}
-          
           <div className="flex items-center gap-2">
             <MapPin className="w-4 h-4 text-gray-500" />
             <span className="text-sm">{deliveryAddress}</span>
           </div>
-          
           <div className="flex justify-between items-center pt-2 border-t">
             <div>
               <span className="text-sm text-gray-600">
@@ -110,12 +97,10 @@ export default function OrderCard({ order, onStatusChange, onView }: OrderCardPr
               </span>
               <div className="font-semibold">{totalPrice.toFixed(2)} €</div>
             </div>
-            
             <div className="flex gap-2">
               <Button variant="outline" size="sm" onClick={() => onView(order)}>
                 Voir détails
               </Button>
-              
               {(currentStatusString.includes("attente") || currentStatusString === "pending") && (
                 <Button 
                   size="sm" 
@@ -126,7 +111,6 @@ export default function OrderCard({ order, onStatusChange, onView }: OrderCardPr
                   Accepter
                 </Button>
               )}
-              
               {nextStatus && !currentStatusString.includes("attente") && currentStatusString !== "pending" && (
                 <Button 
                   size="sm" 
@@ -137,7 +121,6 @@ export default function OrderCard({ order, onStatusChange, onView }: OrderCardPr
                   {statusLabels[nextStatus] || nextStatus}
                 </Button>
               )}
-              
               {(currentStatusString.includes("attente") || currentStatusString === "pending") && (
                 <Button 
                   variant="destructive" 

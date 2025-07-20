@@ -18,8 +18,6 @@ export interface OrderItem {
     }[];
   }[];
 }
-
-// Detailed order item structure from the order details API
 export interface DetailedOrderItem {
   id: number;
   order_id: number;
@@ -40,21 +38,18 @@ export interface DetailedOrderItem {
     extra_price: string;
   }[];
 }
-
 export interface OrderStatus {
   id: number;
   name: string;
   created_at: string;
   updated_at: string;
 }
-
 export interface OrderClient {
   id: number;
   first_name: string;
   last_name: string;
   email: string;
 }
-
 export interface OrderRestaurantImage {
   id: number;
   filename: string;
@@ -67,7 +62,6 @@ export interface OrderRestaurantImage {
   entityType: string;
   created_at: string;
 }
-
 export interface OrderRestaurant {
   id: number;
   name: string;
@@ -82,7 +76,6 @@ export interface OrderRestaurant {
   lat: string;
   images: OrderRestaurantImage[];
 }
-
 export interface OrderDeliverer {
   id: number;
   first_name: string;
@@ -90,7 +83,6 @@ export interface OrderDeliverer {
   email: string;
   phone_number?: string;
 }
-
 export interface Order {
   id: number;
   client_id: number;
@@ -118,7 +110,6 @@ export interface Order {
   items_count?: number;
   orderItems?: OrderItem[];
   notes?: string;
-  // Legacy fields for backward compatibility
   customer?: {
     id: number;
     first_name: string;
@@ -127,8 +118,6 @@ export interface Order {
     phone_number?: string;
   };
 }
-
-// Detailed order interface for the order details modal
 export interface DetailedOrder {
   id: number;
   client_id: number;
@@ -155,5 +144,4 @@ export interface DetailedOrder {
   restaurant: OrderRestaurant;
   deliverer: OrderDeliverer | null;
 }
-
 export type OrderStatusType = "pending" | "accepted" | "preparing" | "ready" | "delivered" | "cancelled";

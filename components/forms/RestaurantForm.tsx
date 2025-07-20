@@ -1,10 +1,8 @@
 "use client";
-
 import { useState, useRef } from "react";
 import { useRestaurantForm } from "@/components/hooks/useRestaurantForm";
 import { useRestaurantTypes } from "@/components/hooks/useRestaurantTypes";
 import { COLORS } from "@/app/constants";
-
 import { GeocodingResult } from "@/types/geocoding";
 import { RestaurantFormValues } from "@/app/create-company/schema";
 import { RestaurantType } from "@/types/restaurantType";
@@ -28,7 +26,6 @@ import {
 } from "@/components/ui/shadcn/select";
 import { useAddressAutocomplete } from "../hooks/useAddressAutoComplete";
 import { Building2, Mail, FileText, MapPin, Hash, Coffee, Save, Edit } from "lucide-react";
-
 export function RestaurantForm() {
   const { form, id, router } = useRestaurantForm();
   const { restaurantTypes, loading: typesLoading, error: typesError } = useRestaurantTypes();
@@ -43,10 +40,8 @@ export function RestaurantForm() {
     loading: geocodeLoading,
     error: geocodeError,
   } = useAddressAutocomplete();
-
   const onSubmit = async (data: RestaurantFormValues) => {
     if (isSubmitting) return;
-    
     setIsSubmitting(true);
     try {
       const coordinates: GeocodingResult | null = await fetchGeocode(
@@ -60,7 +55,6 @@ export function RestaurantForm() {
         alert("Numéro de rue introuvable.");
         return;
       }
-
       const streetName =
         coordinates.street?.replace(
           new RegExp(`^${coordinates.street_number}\\s*`),
@@ -77,27 +71,21 @@ export function RestaurantForm() {
         country: coordinates.country,
         restaurantTypeId: data.restaurantTypeId ? parseInt(data.restaurantTypeId, 10) : undefined,
       };
-
       const endpoint = id
         ? `/api/proxy/restaurant/${id}`
         : `/api/proxy/restaurant`;
       const method = id ? "PUT" : "POST";
-
       const res = await fetch(endpoint, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({ message: "Erreur inconnue" }));
         throw new Error(errorData.message || `Erreur ${res.status}`);
       }
-
       const result = await res.json();
-      
       const restaurantId = result.id || result.data?.id || id;
-      
       if (!id && restaurantId) {
         router.push(`/restaurants/${restaurantId}`);
       } else if (id) {
@@ -106,14 +94,12 @@ export function RestaurantForm() {
         router.push("/profile");
       }
     } catch (err) {
-      console.error("Form submission error:", err);
       const errorMessage = err instanceof Error ? err.message : "Erreur lors de la soumission.";
       alert(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
       <div className="max-w-3xl mx-auto">
@@ -137,7 +123,6 @@ export function RestaurantForm() {
             {id ? "Mettez à jour les informations de votre établissement" : "Ajoutez un nouveau restaurant à votre collection"}
           </p>
         </div>
-
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -197,7 +182,6 @@ export function RestaurantForm() {
                 </FormControl>
                 <FormMessage className="text-red-500 text-sm mt-1" />
               </FormItem>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
@@ -227,7 +211,6 @@ export function RestaurantForm() {
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="email"
@@ -258,7 +241,6 @@ export function RestaurantForm() {
                   )}
                 />
               </div>
-
               <FormField
                 control={form.control}
                 name="description"
@@ -288,7 +270,6 @@ export function RestaurantForm() {
                   </FormItem>
                 )}
               />
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
@@ -318,7 +299,6 @@ export function RestaurantForm() {
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="restaurantTypeId"
@@ -357,7 +337,6 @@ export function RestaurantForm() {
                   )}
                 />
               </div>
-
               {geocodeError && (
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                   <p className="text-sm text-red-600 flex items-center gap-2">
@@ -366,7 +345,6 @@ export function RestaurantForm() {
                   </p>
                 </div>
               )}
-
               <div className="pt-4">
                 <Button
                   type="submit"

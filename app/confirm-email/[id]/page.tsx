@@ -33,7 +33,6 @@ export default function ConfirmEmailPage() {
 
         setStatus("success");
       } catch (err) {
-        console.error("Email confirmation error:", err);
         setStatus("error");
       }
     };

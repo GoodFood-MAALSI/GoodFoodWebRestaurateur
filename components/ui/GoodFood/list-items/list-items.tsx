@@ -2,11 +2,9 @@ import React from "react";
 import ItemCard from "./ItemCard";
 import { MenuItem } from "@/types/menu/menuItem";
 import { COLORS } from "@/app/constants";
-
 interface ListItemsProps {
   items?: MenuItem[];
 }
-
 const ListItems: React.FC<ListItemsProps> = ({ items = [] }) => (
   <div className="w-full">
     {items.length === 0 ? (
@@ -38,5 +36,4 @@ const ListItems: React.FC<ListItemsProps> = ({ items = [] }) => (
     )}
   </div>
 );
-
 export default ListItems;

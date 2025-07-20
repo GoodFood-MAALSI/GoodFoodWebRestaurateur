@@ -9,19 +9,16 @@ import {
 import { Input } from "@/components/ui/shadcn/input";
 import { Button } from "@/components/ui/shadcn/button";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
-
 interface Category {
   id: number;
   name: string;
   position: number;
 }
-
 interface CategoryStepProps {
   restaurantId: number;
   selectedCategory?: Category;
   onNext: (category: Category) => void;
 }
-
 export default function CategoryStep({
   restaurantId,
   selectedCategory,
@@ -33,9 +30,7 @@ export default function CategoryStep({
   const [choice, setChoice] = useState<number | null>(
     selectedCategory?.id ?? null
   );
-
   const canNext = choice !== null || name.trim() !== "";
-
   useEffect(() => {
     fetchWithAuth(`/api/proxy/restaurant/${restaurantId}/menu-categories`)
       .then((res) => res.json())
@@ -43,14 +38,11 @@ export default function CategoryStep({
         setCategories(json.data?.menuCategories || []);
       });
   }, [restaurantId]);
-
   const handleNext = async () => {
     let category: Category;
-
     if (choice) {
       const found = categories.find((c) => c.id === choice);
       if (!found) {
-        console.error("Category not found for ID:", choice);
         return;
       }
       category = found;
@@ -63,15 +55,11 @@ export default function CategoryStep({
           headers: { "Content-Type": "application/json" },
         }
       );
-
       const json = await res.json();
       category = json.data;
-      
     }
-
     onNext(category);
   };
-
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">Étape 1: Catégorie</h3>

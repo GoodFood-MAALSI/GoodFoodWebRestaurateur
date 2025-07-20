@@ -1,9 +1,7 @@
 "use client";
-
 import React from "react";
 import { ChevronDown, Building2 } from "lucide-react";
 import { COLORS } from "@/app/constants";
-
 interface Restaurant {
   id: number;
   name: string;
@@ -13,14 +11,12 @@ interface Restaurant {
   review_count?: number;
   average_rating?: number;
 }
-
 interface RestaurantSelectorProps {
   restaurants: Restaurant[];
   selectedRestaurant: Restaurant | null;
   onSelectRestaurant: (restaurant: Restaurant) => void;
   loading: boolean;
 }
-
 export default function RestaurantSelector({ 
   restaurants, 
   selectedRestaurant, 
@@ -28,7 +24,6 @@ export default function RestaurantSelector({
   loading 
 }: RestaurantSelectorProps) {
   const [isOpen, setIsOpen] = React.useState(false);
-
   if (loading) {
     return (
       <div className="animate-pulse">
@@ -36,7 +31,6 @@ export default function RestaurantSelector({
       </div>
     );
   }
-
   return (
     <div className="relative">
       <button
@@ -69,7 +63,6 @@ export default function RestaurantSelector({
           }`} 
         />
       </button>
-
       {isOpen && (
         <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
           {restaurants.length === 0 ? (

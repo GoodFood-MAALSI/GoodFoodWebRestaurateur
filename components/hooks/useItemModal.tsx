@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 export function useItemModal() {
   const [isOpen, setIsOpen] = useState(false);
   const open = () => setIsOpen(true);

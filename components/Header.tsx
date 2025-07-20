@@ -1,5 +1,4 @@
 "use client";
-
 import { useRouter } from "next/navigation";
 import {
   NavigationMenu,
@@ -10,21 +9,16 @@ import {
 import Image from "next/image";
 import { COLORS } from "@/app/constants";
 import { User, Home, Building2, ShoppingCart, Star, BarChart3, LogOut } from "lucide-react";
-
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
-
 export default function Header({ showNavbar }: { showNavbar: boolean }) {
   const router = useRouter();
-
   const handleLogout = async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
       router.push('/auth');
     } catch (error) {
-      console.error('Logout error:', error);
     }
   };
-
   return (
     <header className="sticky top-0 bg-white shadow-lg border-b border-gray-100 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -60,7 +54,6 @@ export default function Header({ showNavbar }: { showNavbar: boolean }) {
               <p className="text-xs font-medium" style={{ color: COLORS.text.secondary }}>Espace Restaurateur</p>
             </div>
           </div>
-
           <div className="flex items-center space-x-4">
             {showNavbar && (
               <button
@@ -73,7 +66,6 @@ export default function Header({ showNavbar }: { showNavbar: boolean }) {
             )}
           </div>
         </div>
-
         {showNavbar && (
           <div className="border-t border-gray-100">
             <nav className="flex justify-center py-4">
@@ -91,7 +83,6 @@ export default function Header({ showNavbar }: { showNavbar: boolean }) {
                       <span className="font-medium">Accueil</span>
                     </NavigationMenuLink>
                   </NavigationMenuItem>
-                  
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       onClick={() => router.push("/profile")}
@@ -104,7 +95,6 @@ export default function Header({ showNavbar }: { showNavbar: boolean }) {
                       <span className="font-medium">Mon Profil</span>
                     </NavigationMenuLink>
                   </NavigationMenuItem>
-                  
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       onClick={() => router.push("/restaurants")}
@@ -117,7 +107,6 @@ export default function Header({ showNavbar }: { showNavbar: boolean }) {
                       <span className="font-medium">Mes Restaurants</span>
                     </NavigationMenuLink>
                   </NavigationMenuItem>
-                  
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       onClick={() => router.push("/orders")}
@@ -130,7 +119,6 @@ export default function Header({ showNavbar }: { showNavbar: boolean }) {
                       <span className="font-medium">Commandes</span>
                     </NavigationMenuLink>
                   </NavigationMenuItem>
-                  
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       onClick={() => router.push("/ratings")}
@@ -143,7 +131,6 @@ export default function Header({ showNavbar }: { showNavbar: boolean }) {
                       <span className="font-medium">Avis</span>
                     </NavigationMenuLink>
                   </NavigationMenuItem>
-                  
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       onClick={() => router.push("/stats")}

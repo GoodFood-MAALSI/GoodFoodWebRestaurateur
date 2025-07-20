@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/shadcn/button";
 import { Badge } from "@/components/ui/shadcn/badge";
 import { RefreshCw } from "lucide-react";
 import { COLORS } from "@/app/constants";
-
 interface OrdersListProps {
   orders: Order[];
   loading: boolean;
@@ -16,7 +15,6 @@ interface OrdersListProps {
   title?: string;
   showRestaurantFilter?: boolean;
 }
-
 const statusFilters: { label: string; value: OrderStatusType | "all" }[] = [
   { label: "Toutes", value: "all" },
   { label: "En attente", value: "pending" },
@@ -26,7 +24,6 @@ const statusFilters: { label: string; value: OrderStatusType | "all" }[] = [
   { label: "Livrées", value: "delivered" },
   { label: "Annulées", value: "cancelled" },
 ];
-
 export default function OrdersList({
   orders,
   loading,
@@ -39,18 +36,15 @@ export default function OrdersList({
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [statusFilter, setStatusFilter] = useState<OrderStatusType | "all">("all");
   const [restaurantFilter, setRestaurantFilter] = useState<number | "all">("all");
-
   const handleOrderUpdate = (updatedOrder: Order) => {
     setSelectedOrder(updatedOrder);
   };
-
   const getStatusString = (status: unknown): string => {
     if (typeof status === 'object' && status !== null && 'name' in status) {
       return String((status as { name: string }).name).toLowerCase();
     }
     return String(status).toLowerCase();
   };
-
   const filteredOrders = orders.filter((order) => {
     const orderStatus = getStatusString(order.status);
     const statusMatch = statusFilter === "all" || orderStatus === statusFilter;
@@ -60,13 +54,11 @@ export default function OrdersList({
       order.restaurant?.id === restaurantFilter;
     return statusMatch && restaurantMatch;
   });
-
   const restaurants = showRestaurantFilter 
     ? Array.from(new Set(orders.map(order => order.restaurant?.id).filter(Boolean)))
         .map(id => orders.find(order => order.restaurant?.id === id)?.restaurant)
         .filter(Boolean)
     : [];
-
   const getStatusCount = (status: OrderStatusType | "all") => {
     if (status === "all") return orders.length;
     return orders.filter(order => getStatusString(order.status) === status).length;
@@ -79,7 +71,6 @@ export default function OrdersList({
       </div>
     );
   }
-
   if (error) {
     return (
       <div className="text-center py-8">
@@ -91,7 +82,6 @@ export default function OrdersList({
       </div>
     );
   }
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -101,7 +91,6 @@ export default function OrdersList({
           Actualiser
         </Button>
       </div>
-
       <div className="space-y-4">
         <div>
           <h3 className="text-sm font-medium mb-2">Filtrer par statut</h3>
@@ -118,7 +107,6 @@ export default function OrdersList({
             ))}
           </div>
         </div>
-
         {showRestaurantFilter && restaurants.length > 1 && (
           <div>
             <h3 className="text-sm font-medium mb-2">Filtrer par restaurant</h3>
@@ -144,7 +132,6 @@ export default function OrdersList({
           </div>
         )}
       </div>
-
       {filteredOrders.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-gray-500">Aucune commande trouvée</p>
@@ -161,7 +148,6 @@ export default function OrdersList({
           ))}
         </div>
       )}
-
       <OrderDetailModal
         order={selectedOrder}
         isOpen={selectedOrder !== null}

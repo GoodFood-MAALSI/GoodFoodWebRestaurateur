@@ -44,7 +44,6 @@ export async function POST(
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Backend error:", errorText);
       return NextResponse.json(
         { error: "Erreur lors du téléchargement de l'image" },
         { status: response.status }
@@ -54,7 +53,6 @@ export async function POST(
     const result = await response.json();
     return NextResponse.json(result);
   } catch (error) {
-    console.error("Error uploading restaurant image:", error);
     return NextResponse.json(
       { error: "Erreur interne du serveur" },
       { status: 500 }

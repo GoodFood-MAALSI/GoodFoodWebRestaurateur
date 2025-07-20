@@ -33,7 +33,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error("Error uploading image:", error);
     return NextResponse.json(
       { message: "Erreur lors du téléchargement de l'image" },
       { status: 500 }

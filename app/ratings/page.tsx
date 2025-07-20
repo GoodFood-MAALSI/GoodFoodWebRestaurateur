@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from 'react';
 import { useCurrentUser } from '@/components/hooks/useCurrentUser';
 import { useReviews } from '@/components/hooks/useReviews';
@@ -19,16 +18,13 @@ import {
   RefreshCw,
   Filter
 } from 'lucide-react'; 
-
 export default function RatingsPage() {
   const { restaurants, loading: userLoading } = useCurrentUser();
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [ratingFilter, setRatingFilter] = useState<number | undefined>(undefined);
-
   const currentRestaurantId = selectedRestaurantId || (restaurants && restaurants.length > 0 ? restaurants[0].id : null);
-
   const { reviews, pagination, loading, error, fetchReviews, stats } = useReviews(
     currentRestaurantId || undefined,
     {
@@ -37,33 +33,27 @@ export default function RatingsPage() {
       rating: ratingFilter,
     }
   );
-
   const currentRestaurant = restaurants?.find(r => r.id === currentRestaurantId);
-
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-
   const handleItemsPerPageChange = (newItemsPerPage: number) => {
     setItemsPerPage(newItemsPerPage);
-    setCurrentPage(1); // Reset to first page when changing items per page
+    setCurrentPage(1);
   };
-
   const handleRestaurantChange = (restaurantId: number) => {
     setSelectedRestaurantId(restaurantId);
-    setCurrentPage(1); // Reset to first page when changing restaurant
-    setRatingFilter(undefined); // Reset filter when changing restaurant
+    setCurrentPage(1);
+    setRatingFilter(undefined);
   };
-
   const handleRatingFilterChange = (rating: string) => {
     if (rating === 'all') {
       setRatingFilter(undefined);
     } else {
       setRatingFilter(parseInt(rating));
     }
-    setCurrentPage(1); // Reset to first page when changing filter
+    setCurrentPage(1);
   };
-
   const StarRating = ({ rating, onRatingChange, readonly = false }: { 
     rating: number; 
     onRatingChange?: (rating: number) => void;
@@ -88,14 +78,12 @@ export default function RatingsPage() {
       </div>
     );
   };
-
   const RatingDistribution = () => {
     return (
       <div className="space-y-2">
         {[5, 4, 3, 2, 1].map((rating) => {
           const count = stats.ratingDistribution[rating as keyof typeof stats.ratingDistribution];
           const percentage = stats.totalReviews > 0 ? (count / stats.totalReviews) * 100 : 0;
-          
           return (
             <div key={rating} className="flex items-center gap-3">
               <span className="text-sm font-medium w-3">{rating}</span>
@@ -113,7 +101,6 @@ export default function RatingsPage() {
       </div>
     );
   };
-
   if (userLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -122,7 +109,6 @@ export default function RatingsPage() {
       </div>
     );
   }
-
   if (!restaurants || restaurants.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 py-8">
@@ -136,7 +122,6 @@ export default function RatingsPage() {
       </div>
     );
   }
-
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4 max-w-6xl">
@@ -144,7 +129,6 @@ export default function RatingsPage() {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Avis et Évaluations</h1>
           <p className="text-gray-600">Gérez les avis clients de vos restaurants</p>
         </div>
-
         {restaurants.length > 1 && (
           <Card className="mb-6">
             <CardHeader>
@@ -169,7 +153,6 @@ export default function RatingsPage() {
             </CardContent>
           </Card>
         )}
-
         {currentRestaurant && (
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -187,7 +170,6 @@ export default function RatingsPage() {
                   </div>
                 </CardContent>
               </Card>
-
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
@@ -199,7 +181,6 @@ export default function RatingsPage() {
                   </div>
                 </CardContent>
               </Card>
-
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
@@ -212,7 +193,6 @@ export default function RatingsPage() {
                 </CardContent>
               </Card>
             </div>
-
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
               <Card className="lg:col-span-1">
                 <CardHeader>
@@ -222,10 +202,7 @@ export default function RatingsPage() {
                   <RatingDistribution />
                 </CardContent>
               </Card>
-
-             
             </div>
-
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between flex-wrap gap-4">
@@ -316,7 +293,6 @@ export default function RatingsPage() {
                         </p>
                       </div>
                     ))}
-                    
                     {pagination && pagination.totalPages > 1 && (
                       <div className="mt-8 pt-6 border-t border-gray-200">
                         <Pagination

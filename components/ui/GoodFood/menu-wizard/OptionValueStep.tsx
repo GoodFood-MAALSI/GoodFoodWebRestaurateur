@@ -1,26 +1,22 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/shadcn/input";
 import { Button } from "@/components/ui/shadcn/button";
-
 interface OptionValue {
   id?: string;
   name: string;
   extra_price: number;
   position: number;
 }
-
 interface OptionValueStepProps {
   options: { id: string; name: string }[];
   initial?: OptionValue[][];
   onBack: () => void;
   onFinish: (values: OptionValue[][]) => void;
 }
-
 export default function OptionValueStep({ options, initial = [], onBack, onFinish }: OptionValueStepProps) {
   const [valuesByOption, setValuesByOption] = useState<OptionValue[][]>(
     options.map((_, idx) => initial[idx] || [])
   );
-
   const addValue = (optIdx: number) => {
     setValuesByOption(prev => {
       const copy = [...prev];
@@ -28,7 +24,6 @@ export default function OptionValueStep({ options, initial = [], onBack, onFinis
       return copy;
     });
   };
-
   const updateValue = (optIdx: number, valIdx: number, key: keyof OptionValue, v: unknown) => {
     setValuesByOption(prev => {
       const copy = prev.map(arr => arr.slice());
@@ -36,7 +31,6 @@ export default function OptionValueStep({ options, initial = [], onBack, onFinis
       return copy;
     });
   };
-
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">Étape 4: Valeurs des options</h3>
@@ -48,7 +42,6 @@ export default function OptionValueStep({ options, initial = [], onBack, onFinis
               <label className="block text-sm font-medium text-gray-700">Valeur {vidx + 1} :</label>
               <label className="block text-sm font-medium text-gray-700">Supplément :</label>
               <label className="block text-sm font-medium text-gray-700">Position :</label>
-
               <Input
                 placeholder="Nom"
                 value={val.name}

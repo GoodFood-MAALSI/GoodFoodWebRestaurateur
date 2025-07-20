@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/shadcn/button";
@@ -9,36 +8,29 @@ import { Pagination } from "@/components/ui/GoodFood/pagination/Pagination";
 import { useRestaurants } from "@/components/hooks/useRestaurants";
 import { TEXTS } from "./constants";
 import { COLORS } from "@/app/constants";
-
 const RestaurantListPage = () => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  
   const { restaurants, loading, error, pagination, setPage, setLimit } = useRestaurants({
     page: currentPage,
     limit: itemsPerPage,
   });
-
   const handleCreateRestaurant = () => {
     router.push("/create-company");
   };
-
   const handleRedirectToRestaurant = (id: number) => {
     router.push(`/restaurants/${id}`);
   };
-
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     setPage(page);
   };
-
   const handleItemsPerPageChange = (newLimit: number) => {
     setItemsPerPage(newLimit);
     setCurrentPage(1);
     setLimit(newLimit);
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <main className="w-full max-w-[1400px] mx-auto px-6 pt-8 pb-10 space-y-8">
@@ -58,7 +50,6 @@ const RestaurantListPage = () => {
             </Button>
           </div>
         </div>
-
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 mb-4" style={{ borderColor: COLORS.primary }}></div>
@@ -104,7 +95,6 @@ const RestaurantListPage = () => {
                 </div>
               )}
             </div>
-            
             {restaurants.length === 0 ? (
               <div className="bg-white rounded-xl shadow-sm border p-12 text-center">
                 <div className="max-w-md mx-auto">
@@ -135,7 +125,6 @@ const RestaurantListPage = () => {
                     </div>
                   ))}
                 </div>
-
                 {/* Pagination Component - show even for single page for items per page control */}
                 {pagination && (
                   <div className="mt-8 bg-white rounded-xl shadow-sm border p-6">
@@ -147,7 +136,7 @@ const RestaurantListPage = () => {
                       onPageChange={handlePageChange}
                       onItemsPerPageChange={handleItemsPerPageChange}
                       disabled={loading}
-                      showItemsPerPage={pagination.totalItems > 5} // Only show items per page if more than 5 restaurants
+                      showItemsPerPage={pagination.totalItems > 5}
                     />
                   </div>
                 )}
@@ -159,5 +148,4 @@ const RestaurantListPage = () => {
     </div>
   );
 };
-
 export default RestaurantListPage;

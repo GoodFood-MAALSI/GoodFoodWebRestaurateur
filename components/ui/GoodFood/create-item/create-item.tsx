@@ -17,13 +17,10 @@ import {
 import { Label } from "@/components/ui/shadcn/label";
 import { Button } from "@/components/ui/shadcn/button";
 import { MenuItem } from "@/types/menu/menuItem";
-
 interface ArticleFormProps {
   onSubmit: (data: MenuItem) => void;
     initialData?: Partial<MenuItem>;
-
 }
-
 const CreateItem: React.FC<ArticleFormProps> = ({
   onSubmit,
   initialData = {},
@@ -40,19 +37,16 @@ const CreateItem: React.FC<ArticleFormProps> = ({
   position: initialData.position ?? 0,
   menuItemOptions: initialData.menuItemOptions ?? [],
 });
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
   };
-
   return (
     <Card className="max-w-lg mx-auto mt-20 p-6 shadow-lg">
       <CardHeader>
@@ -142,5 +136,4 @@ const CreateItem: React.FC<ArticleFormProps> = ({
     </Card>
   );
 };
-
 export default CreateItem;

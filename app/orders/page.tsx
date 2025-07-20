@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import { useAllRestaurantOrders } from "@/components/hooks/useAllRestaurantOrders";
 import OrdersList from "@/components/ui/GoodFood/orders/OrdersList";
@@ -8,12 +7,10 @@ import { Toaster } from "@/components/ui/shadcn/sonner";
 import { toast } from "sonner";
 import { COLORS, ORDER_STATUS_COLORS, ORDER_STATUS_TEXT_COLORS } from "@/app/constants";
 import { OrderStatusType } from "@/types/order";
-
 export default function OrdersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [statusFilter, setStatusFilter] = useState<number | undefined>(undefined);
-
   const { 
     restaurantOrders, 
     allOrders, 
@@ -27,7 +24,6 @@ export default function OrdersPage() {
     limit: itemsPerPage,
     statusId: statusFilter,
   });
-
   const handleStatusChange = async (orderId: number, status: OrderStatusType) => {
     try {
       await updateOrderStatus(orderId, status);
@@ -37,28 +33,23 @@ export default function OrdersPage() {
       throw error;
     }
   };
-
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-
   const handleItemsPerPageChange = (limit: number) => {
     setItemsPerPage(limit);
-    setCurrentPage(1); // Reset to first page when changing limit
+    setCurrentPage(1);
   };
-
   const handleStatusFilterChange = (statusId: number | undefined) => {
     setStatusFilter(statusId);
-    setCurrentPage(1); // Reset to first page when changing filter
+    setCurrentPage(1);
   };
-
   const getStatusString = (status: unknown): string => {
     if (typeof status === 'object' && status !== null && 'name' in status) {
       return String((status as { name: string }).name).toLowerCase();
     }
     return String(status).toLowerCase();
   };
-
   const getOrderCounts = () => {
     const counts = {
       total: allOrders.length,
@@ -69,7 +60,6 @@ export default function OrdersPage() {
       delivered: 0,
       cancelled: 0,
     };
-
     allOrders.forEach(order => {
       const statusString = getStatusString(order.status);
       if (statusString.includes('attente') || statusString === 'pending') {
@@ -86,12 +76,9 @@ export default function OrdersPage() {
         counts.cancelled++;
       }
     });
-
     return counts;
   };
-
   const orderCounts = getOrderCounts();
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Toaster />
@@ -101,7 +88,6 @@ export default function OrdersPage() {
           <p className="text-gray-600 mt-2">
             Suivez et gérez toutes vos commandes en temps réel
           </p>
-          
           {/* Status Filter Buttons */}
           <div className="mt-6 flex flex-wrap gap-3">
             <button
@@ -172,7 +158,6 @@ export default function OrdersPage() {
             </button>
           </div>
         </div>
-
         {!loading && allOrders.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
             <div className="rounded-lg p-4 text-center" style={{ backgroundColor: ORDER_STATUS_COLORS.total }}>
@@ -205,7 +190,6 @@ export default function OrdersPage() {
             </div>
           </div>
         )}
-
         {loading && (
           <div className="flex justify-center items-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -214,13 +198,11 @@ export default function OrdersPage() {
             </span>
           </div>
         )}
-
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
             <p style={{ color: COLORS.error }}>{error}</p>
           </div>
         )}
-
         {!loading && !error && Object.keys(restaurantOrders).length === 0 && (
           <div className="text-center py-12">
             <h3 className="text-lg font-medium text-gray-900 mb-2">
@@ -231,7 +213,6 @@ export default function OrdersPage() {
             </p>
           </div>
         )}
-
         {!loading && allOrders.length > 0 && (
           <div className="mb-12">
             <OrdersList
@@ -243,7 +224,6 @@ export default function OrdersPage() {
               title={`Toutes les commandes${statusFilter ? ' filtrées' : ''}`}
               showRestaurantFilter={true}
             />
-            
             {/* Pagination Controls */}
             {allOrdersPagination && allOrdersPagination.totalPages > 1 && (
               <div className="mt-8 bg-white rounded-xl shadow-sm border p-6">
@@ -261,7 +241,6 @@ export default function OrdersPage() {
             )}
           </div>
         )}
-
         {Object.values(restaurantOrders).map(({ restaurant, orders: restaurantOrdersList }) => (
           <div key={restaurant.id} className="mb-12">
             <div className="bg-white rounded-lg shadow-sm border p-6">
@@ -279,7 +258,6 @@ export default function OrdersPage() {
                   <p className="text-sm text-gray-600">commande(s)</p>
                 </div>
               </div>
-
               <OrdersList
                 orders={restaurantOrdersList}
                 loading={false}

@@ -1,17 +1,13 @@
 "use client";
-
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-
 import { loginSchema } from "@/lib/validators/auth";
 import { loginTexts } from "@/app/auth/constants";
 import type { LoginForm } from "@/types/auth";
-
 export function useAuthForm() {
   const router = useRouter();
-
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -19,7 +15,6 @@ export function useAuthForm() {
       password: "",
     },
   });
-
   const onSubmit = async (data: LoginForm) => {
     try {
       const response = await fetch("/api/auth/login", {
@@ -30,7 +25,6 @@ export function useAuthForm() {
         body: JSON.stringify(data),
         credentials: "include",
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         if (response.status === 401) {
@@ -39,9 +33,7 @@ export function useAuthForm() {
         }
         throw new Error(errorData.message || loginTexts.error.default);
       }
-
       await response.json();
-
       const restaurantsRes = await fetch(`/api/proxy/restaurant/me`, {
         method: "GET",
         credentials: "include",
@@ -49,14 +41,11 @@ export function useAuthForm() {
       if (!restaurantsRes.ok) {
         throw new Error("Impossible de récupérer les restaurants.");
       }
-
       const restaurantsJson = await restaurantsRes.json();
       const restaurantsList = restaurantsJson.data?.restaurants;
       if (!Array.isArray(restaurantsList)) {
-        console.warn("Réponse inattendue : restaurants n'est pas un tableau.", restaurantsJson);
         throw new Error("Réponse inattendue du serveur.");
       }
-
       if (restaurantsList.length > 0) {
         router.push("/profile");
       } else {
@@ -64,7 +53,6 @@ export function useAuthForm() {
         router.push("/create-company");
       }
     } catch (error: unknown) {
-      console.error("Erreur de connexion:", error);
       if (error && typeof error === "object" && "message" in error) {
         toast.error((error as { message: string }).message || loginTexts.error.default);
       } else {
@@ -72,7 +60,6 @@ export function useAuthForm() {
       }
     }
   };
-
   return {
     form,
     onSubmit,

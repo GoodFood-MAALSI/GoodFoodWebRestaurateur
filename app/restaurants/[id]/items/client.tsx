@@ -32,7 +32,6 @@ export default function ClientItemForm() {
 
   const handleSubmit = async (data: MenuItem) => {
     try {
-      // Use the original useMenuItems hook logic for adding items
       const menuItemPayload = {
         name: data.name,
         price: parseFloat(data.price?.toString() || "0"),
@@ -110,7 +109,6 @@ export default function ClientItemForm() {
       addItemToCategory(finalMenuItem);
       toast.success("Article créé avec succès !");
     } catch (err) {
-      console.error(err);
       toast.error("Erreur lors de la création de l'article");
     }
   };

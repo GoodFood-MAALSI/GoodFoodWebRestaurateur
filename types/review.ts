@@ -4,7 +4,6 @@ export interface CreateClientReviewRestaurantDto {
   restaurantId: number;
   clientId: number;
 }
-
 export interface ClientReview {
   id: number;
   review: string;
@@ -42,7 +41,6 @@ export interface ClientReview {
     updated_at: string;
   };
 }
-
 export interface ReviewStats {
   averageRating: number;
   totalReviews: number;

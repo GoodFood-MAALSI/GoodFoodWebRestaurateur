@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import { Order } from "@/types/order";
 import { RestaurantStats } from "@/types/stats";
@@ -16,13 +15,11 @@ import {
   Truck,
   XCircle
 } from "lucide-react";
-
 interface RestaurantStatsGridProps {
   orders: Order[];
   stats: RestaurantStats | null;
   loading: boolean;
 }
-
 export default function RestaurantStatsGrid({ orders, stats, loading }: RestaurantStatsGridProps) {
   const getStatusString = (status: unknown): string => {
     if (typeof status === 'object' && status !== null && 'name' in status) {
@@ -30,7 +27,6 @@ export default function RestaurantStatsGrid({ orders, stats, loading }: Restaura
     }
     return String(status).toLowerCase();
   };
-
   const getOrderCounts = () => {
     const counts = {
       total: orders.length,
@@ -41,7 +37,6 @@ export default function RestaurantStatsGrid({ orders, stats, loading }: Restaura
       delivered: 0,
       cancelled: 0,
     };
-
     orders.forEach(order => {
       const statusString = getStatusString(order.status);
       if (statusString.includes('attente') || statusString === 'pending') {
@@ -58,24 +53,19 @@ export default function RestaurantStatsGrid({ orders, stats, loading }: Restaura
         counts.cancelled++;
       }
     });
-
     return counts;
   };
-
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: 'EUR'
     }).format(amount);
   };
-
   const calculateAverageOrderValue = () => {
     if (!stats || stats.order_count === 0) return 0;
     return stats.revenue / stats.order_count;
   };
-
   const orderCounts = getOrderCounts();
-
   if (loading) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
@@ -87,7 +77,6 @@ export default function RestaurantStatsGrid({ orders, stats, loading }: Restaura
       </div>
     );
   }
-
   return (
     <div className="space-y-8">
       {/* Real-time Order Status Counts */}
@@ -147,7 +136,6 @@ export default function RestaurantStatsGrid({ orders, stats, loading }: Restaura
           </div>
         </div>
       </div>
-
       {/* Business Statistics from API */}
       {stats && (
         <div>
@@ -180,7 +168,6 @@ export default function RestaurantStatsGrid({ orders, stats, loading }: Restaura
                 </p>
               </div>
             </div>
-
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
               <div className="flex items-center justify-between mb-4">
                 <div 
@@ -205,7 +192,6 @@ export default function RestaurantStatsGrid({ orders, stats, loading }: Restaura
                 </p>
               </div>
             </div>
-
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
               <div className="flex items-center justify-between mb-4">
                 <div 
@@ -230,7 +216,6 @@ export default function RestaurantStatsGrid({ orders, stats, loading }: Restaura
                 </p>
               </div>
             </div>
-
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
               <div className="flex items-center justify-between mb-4">
                 <div 
@@ -256,7 +241,6 @@ export default function RestaurantStatsGrid({ orders, stats, loading }: Restaura
               </div>
             </div>
           </div>
-
           {/* Popular Menu Item */}
           <div className="mt-6 bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-lg border border-yellow-200">
             <div className="flex items-center justify-between">

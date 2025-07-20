@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardContent } from "@/components/ui/shadcn/card";
@@ -28,38 +27,26 @@ import {
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/shadcn/sonner";
 import LogoutSection from "@/components/ui/GoodFood/logout/Logout";
-
 const ProfilePage = () => {
   const router = useRouter();
-  
   const { user, restaurants, loading: userLoading, error: userError } = useCurrentUser();
   const { stats, loading: statsLoading, error: statsError } = useComprehensiveStats();
-  
   const firstUserId = user?.id || 11;
   const { allOrders, loading: ordersLoading } = useAllRestaurantOrders(firstUserId);
-
-  // Use real stats instead of hardcoded values
   const todayOrders = stats.todayOrders;
   const monthlyRevenue = stats.monthlyRevenue.toFixed(0);
   const averageRating = stats.averageRating.toFixed(1);
   const revenueGrowthPercentage = stats.revenueGrowthPercentage;
-
   const displayName = user?.first_name && user?.last_name 
     ? `${user.first_name} ${user.last_name}`
     : user?.email?.split('@')[0] || 'Utilisateur';
-
   const joinDate = user?.created_at 
     ? new Date(user.created_at).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
     : 'Récemment';
-
   const totalRestaurants = stats.totalRestaurants;
   const openRestaurants = stats.openRestaurants;
   const totalOrders = stats.totalOrders;
-
-  // Use comprehensive stats for status counts
   const statusCounts = stats.statusCounts;
-
-  // Helper function for order total calculation (still needed for display)
   const calculateOrderTotal = (order: unknown) => {
     if (typeof order !== 'object' || order === null) return 0;
     const orderObj = order as any;
@@ -69,7 +56,6 @@ const ProfilePage = () => {
     const discount = parseFloat(orderObj.global_discount || "0");
     return subtotal + deliveryCosts + serviceCharge - discount;
   };
-
   const quickActions = [
     {
       title: "Nouveau Restaurant",
@@ -108,18 +94,15 @@ const ProfilePage = () => {
       badge: null
     }
   ];
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
       <Toaster />
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
-        
         {userLoading && (
           <div className="flex justify-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: COLORS.primary }}></div>
           </div>
         )}
-
         {statsError && (
           <div className="text-center py-4">
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
@@ -130,7 +113,6 @@ const ProfilePage = () => {
             </div>
           </div>
         )}
-
         {userError && (
           <div className="text-center py-8">
             <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-4">
@@ -139,7 +121,6 @@ const ProfilePage = () => {
             </div>
           </div>
         )}
-        
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-4" style={{ backgroundColor: COLORS.primary }}>
             <User className="w-10 h-10 text-white" />
@@ -147,7 +128,6 @@ const ProfilePage = () => {
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Tableau de Bord</h1>
           <p className="text-gray-600 text-lg">Bienvenue, {displayName}</p>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="bg-white border-l-4 hover:shadow-lg transition-shadow" style={{ borderLeftColor: COLORS.primary }}>
             <CardContent className="p-6">
@@ -163,7 +143,6 @@ const ProfilePage = () => {
               </div>
             </CardContent>
           </Card>
-
           <Card className="bg-white border-l-4 hover:shadow-lg transition-shadow" style={{ borderLeftColor: COLORS.secondary }}>
             <CardContent className="p-6">
               <div className="flex items-center">
@@ -190,7 +169,6 @@ const ProfilePage = () => {
               </div>
             </CardContent>
           </Card>
-
           <Card className="bg-white border-l-4 hover:shadow-lg transition-shadow" style={{ borderLeftColor: COLORS.success }}>
             <CardContent className="p-6">
               <div className="flex items-center">
@@ -219,7 +197,6 @@ const ProfilePage = () => {
               </div>
             </CardContent>
           </Card>
-
           <Card className="bg-white border-l-4 hover:shadow-lg transition-shadow" style={{ borderLeftColor: COLORS.warning }}>
             <CardContent className="p-6">
               <div className="flex items-center">
@@ -247,11 +224,8 @@ const ProfilePage = () => {
             </CardContent>
           </Card>
         </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
           <div className="lg:col-span-1 space-y-6">
-            
             <Card className="bg-white shadow-lg border-0">
               <CardHeader 
                 className="text-white rounded-t-lg"
@@ -297,7 +271,6 @@ const ProfilePage = () => {
                 </div>
               </CardContent>
             </Card>
-
             <Card className="bg-white shadow-lg">
               <CardHeader>
                 <h3 className="text-lg font-semibold text-gray-900">Actions Rapides</h3>
@@ -330,9 +303,7 @@ const ProfilePage = () => {
               </CardContent>
             </Card>
           </div>
-
           <div className="lg:col-span-2 space-y-6">
-            
             <Card className="bg-white shadow-lg">
               <CardHeader className="flex flex-row items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900">Mes Restaurants</h3>
@@ -393,7 +364,6 @@ const ProfilePage = () => {
                 )}
               </CardContent>
             </Card>
-
             <Card className="bg-white shadow-lg">
               <CardHeader className="flex flex-row items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900">Aperçu des Commandes</h3>
@@ -442,7 +412,6 @@ const ProfilePage = () => {
                         </div>
                       ))}
                     </div>
-
                     {allOrders.length === 0 ? (
                       <div className="text-center py-6">
                         <ShoppingBag className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -489,7 +458,6 @@ const ProfilePage = () => {
             </Card>
           </div>
         </div>
-
         {restaurants.length > 0 && (
           <Card className="bg-white shadow-lg">
             <CardHeader>
@@ -514,7 +482,6 @@ const ProfilePage = () => {
                   <span className="font-medium">Créer un Menu</span>
                   <span className="text-sm text-gray-500">Nouveau menu pour un restaurant</span>
                 </Button>
-                
                 <Button
                   onClick={() => {
                     if (restaurants.length > 0) {
@@ -528,7 +495,6 @@ const ProfilePage = () => {
                   <span className="font-medium">Gérer Menu</span>
                   <span className="text-sm text-gray-500">Modifier menu existant</span>
                 </Button>
-
                 <Button
                   onClick={() => router.push("/stats")}
                   className="p-6 h-auto flex flex-col items-center space-y-2 border-2 border-dashed hover:bg-yellow-50 transition-colors"
@@ -546,5 +512,4 @@ const ProfilePage = () => {
     </div>
   );
 };
-
 export default ProfilePage;

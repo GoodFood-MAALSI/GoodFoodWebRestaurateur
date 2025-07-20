@@ -1,20 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MenuCategory } from "@/types/menu/menuCategory";
 import ItemCard from "../list-items/ItemCard";
 import { COLORS } from "@/app/constants";
 import { ChevronDown, ChevronUp, Utensils, Clock, Star, Flame } from "lucide-react";
-
 interface CategoryCardProps {
   category: MenuCategory;
   defaultExpanded?: boolean;
+  categoryIndex?: number;
+  isExpanded?: boolean;
+  onExpandedChange?: (expanded: boolean) => void;
 }
-
 const CategoryCard: React.FC<CategoryCardProps> = ({ 
   category, 
-  defaultExpanded = true 
+  defaultExpanded = true,
+  categoryIndex = 0,
+  isExpanded: controlledExpanded,
+  onExpandedChange
 }) => {
-  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+  const [internalExpanded, setInternalExpanded] = useState(defaultExpanded);
   
+  const isExpanded = controlledExpanded !== undefined ? controlledExpanded : internalExpanded;
+
+  useEffect(() => {
+    if (controlledExpanded === undefined) {
+      setInternalExpanded(defaultExpanded);
+    }
+  }, [defaultExpanded, controlledExpanded]);
+
+  const handleToggle = () => {
+    if (onExpandedChange) {
+      onExpandedChange(!isExpanded);
+    } else {
+      setInternalExpanded(!isExpanded);
+    }
+  };
+
   const getCategoryIcon = (categoryName: string) => {
     const name = categoryName.toLowerCase();
     if (name.includes('entrée') || name.includes('starter') || name.includes('appetizer')) {
@@ -31,34 +51,33 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
     }
     return <Utensils className="w-5 h-5" />;
   };
-
-  const getCategoryColor = (categoryName: string) => {
-    const name = categoryName.toLowerCase();
-    if (name.includes('entrée') || name.includes('starter') || name.includes('appetizer')) {
-      return '#10B981'; // emerald-500
-    }
-    if (name.includes('plat') || name.includes('main') || name.includes('principal')) {
-      return '#F59E0B'; // amber-500
-    }
-    if (name.includes('dessert') || name.includes('sweet')) {
-      return '#EC4899'; // pink-500
-    }
-    if (name.includes('boisson') || name.includes('drink') || name.includes('beverage')) {
-      return '#3B82F6'; // blue-500
-    }
-    return COLORS.primary;
+  const getCategoryColor = (index: number) => {
+    const colorPalette = [
+      COLORS.primary,
+      COLORS.secondary,
+      COLORS.status.light,
+      COLORS.status.medium,
+      COLORS.status.dark,
+      COLORS.status.darker,
+      '#10B981',
+      '#F59E0B',
+      '#EC4899',
+      '#3B82F6',
+      '#8B5CF6',
+      '#F97316',
+    ];
+    
+    return colorPalette[index % colorPalette.length];
   };
-
-  const categoryColor = getCategoryColor(category.name);
+  const categoryColor = getCategoryColor(categoryIndex);
   const availableItems = category.menuItems.filter(item => item.is_available);
   const unavailableItems = category.menuItems.filter(item => !item.is_available);
-
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl">
       {/* Category Header */}
       <div 
         className="cursor-pointer select-none"
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={handleToggle}
       >
         <div className="px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
           <div className="flex items-center justify-between">
@@ -97,7 +116,6 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
           </div>
         </div>
       </div>
-
       {/* Category Content */}
       {isExpanded && (
         <div className="p-6">
@@ -124,7 +142,6 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
                   </div>
                 </div>
               )}
-
               {/* Unavailable Items */}
               {unavailableItems.length > 0 && (
                 <div>
@@ -148,5 +165,4 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
     </div>
   );
 };
-
 export default CategoryCard;

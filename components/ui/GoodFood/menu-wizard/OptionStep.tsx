@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Input } from "@/components/ui/shadcn/input";
 import { Switch } from "@/components/ui/shadcn/switch";
 import { Button } from "@/components/ui/shadcn/button";
-
 interface OptionConfig {
   id?: string;
   name: string;
@@ -10,25 +9,20 @@ interface OptionConfig {
   is_multiple_choice: boolean;
   position: number;
 }
-
 interface OptionStepProps {
   initial?: OptionConfig[];
   onBack: () => void;
   onNext: (options: OptionConfig[]) => void;
 }
-
 export default function OptionStep({ initial = [], onBack, onNext }: OptionStepProps) {
   const [options, setOptions] = useState<OptionConfig[]>(initial);
-
   const addEmpty = () => {
     setOptions(prev => [...prev, { id: crypto.randomUUID(), name: "", is_required: false, is_multiple_choice: false, position: prev.length + 1 }]);
   };
-
   const updateOption = (idx: number, key: keyof OptionConfig, value: unknown) => {
     setOptions(prev => prev.map((o,i) => i === idx ? { ...o, [key]: value } : o));
     crypto.randomUUID()
   };
-
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">Étape 3: Options</h3>

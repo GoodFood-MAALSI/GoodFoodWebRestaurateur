@@ -26,7 +26,6 @@ export async function GET(
     return NextResponse.json(data, { status: backendRes.status });
   } catch (error) {
     const { id } = await params;
-    console.error(id, "Error fetching orders:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
@@ -60,7 +59,6 @@ export async function PATCH(
     const data = await backendRes.json();
     return NextResponse.json(data, { status: backendRes.status });
   } catch (error) {
-    console.error("Error updating order status:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

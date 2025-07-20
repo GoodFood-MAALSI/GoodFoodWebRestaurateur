@@ -1,9 +1,7 @@
 "use client";
-
 import React from "react";
 import { COLORS } from "@/app/constants";
 import { LucideIcon } from "lucide-react";
-
 interface StatsCardProps {
   title: string;
   value: string | number;
@@ -16,7 +14,6 @@ interface StatsCardProps {
     isPositive: boolean;
   };
 }
-
 export default function StatsCard({ 
   title, 
   value, 
@@ -36,19 +33,17 @@ export default function StatsCard({
         className="absolute top-0 right-0 w-20 h-20 rounded-full opacity-10 -translate-y-4 translate-x-4 group-hover:opacity-15 transition-opacity duration-200"
         style={{ backgroundColor: color }}
       />
-      
       <div className="relative">
         <div className="flex items-center justify-between mb-4">
           <div 
             className="p-3 rounded-lg group-hover:scale-105 transition-transform duration-200"
             style={{ 
-              backgroundColor: color + '20', // 20% opacity
+              backgroundColor: color + '20',
               color: color 
             }}
           >
             <Icon className="w-6 h-6" />
           </div>
-          
           {trend && (
             <div className="flex items-center space-x-1">
               <span 
@@ -63,7 +58,6 @@ export default function StatsCard({
             </div>
           )}
         </div>
-        
         <div>
           <h3 className="text-sm font-medium text-gray-600 mb-1 uppercase tracking-wide">
             {title}

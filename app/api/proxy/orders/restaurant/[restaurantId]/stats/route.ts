@@ -13,7 +13,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const { restaurantId } = await params;
     const { searchParams } = new URL(request.url);
     
-    // Get query parameters for time period (daily, weekly, monthly, yearly) and offset
     const period = searchParams.get('period') || 'monthly';
     const offset = searchParams.get('offset') || '0';
     
@@ -35,7 +34,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const responseData = await response.json();
     return NextResponse.json(responseData);
   } catch (error) {
-    console.error('Error fetching restaurant stats:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

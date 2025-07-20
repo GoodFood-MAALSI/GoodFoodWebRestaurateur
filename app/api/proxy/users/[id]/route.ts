@@ -20,9 +20,7 @@ export async function GET(
     });
 
     if (!response.ok) {
-      console.error(`[Users Proxy] Failed to fetch user data:`, response.status, response.statusText);
       const errorText = await response.text();
-      console.error(`[Users Proxy] Error response:`, errorText);
       
       return NextResponse.json(
         { 
@@ -38,7 +36,6 @@ export async function GET(
 
     return NextResponse.json(userData);
   } catch (error) {
-    console.error('[Users Proxy] Error fetching user data:', error);
     return NextResponse.json(
       { 
         error: 'Internal server error while fetching user data',

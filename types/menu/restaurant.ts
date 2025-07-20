@@ -1,6 +1,5 @@
 import { Item } from "../item";
 import { MenuCategory } from "./menuCategory";
-
 export interface RestaurantImage {
   id: number;
   filename: string;
@@ -12,7 +11,6 @@ export interface RestaurantImage {
   menu_item_id: number | null;
   entityType: string;
 }
-
 export interface Restaurant {
   menuItems: Item[] | undefined;
   id: number;

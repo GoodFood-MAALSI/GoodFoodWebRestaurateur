@@ -3,16 +3,13 @@ import { MenuItem } from "@/types/menu/menuItem";
 import { Button } from "@/components/ui/shadcn/button";
 import ConfirmDeleteDialog from "@/components/ui/GoodFood/ConfirmDeleteDialog";
 import EditItemForm from "@/components/ui/GoodFood/list-items/EditItemForm";
-
 interface Props {
   item: MenuItem;
   onClose: () => void;
 }
-
 const ItemDetailsModal: React.FC<Props> = ({ item, onClose }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
-
   const handleDelete = async () => {
     try {
       const response = await fetch(`/api/menu/items/${item.id}`, {
@@ -21,15 +18,12 @@ const ItemDetailsModal: React.FC<Props> = ({ item, onClose }) => {
       if (!response.ok) throw new Error("Échec de la suppression");
       onClose();
     } catch (error) {
-      console.error(error);
     }
   };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl relative">
         <button onClick={onClose} className="absolute top-3 right-3 text-gray-400 hover:text-black">×</button>
-
         {!isEditing ? (
           <>
             <img
@@ -39,7 +33,6 @@ const ItemDetailsModal: React.FC<Props> = ({ item, onClose }) => {
             />
             <h2 className="text-2xl font-bold mb-2">{item.name}</h2>
             <p className="text-gray-600 mb-4">{item.price} €</p>
-
             <div className="flex justify-between">
               <Button onClick={() => setIsEditing(true)}>Modifier</Button>
               <Button variant="destructive" onClick={() => setConfirmDelete(true)}>
@@ -56,7 +49,6 @@ const ItemDetailsModal: React.FC<Props> = ({ item, onClose }) => {
             }} />
           </>
         )}
-
         {confirmDelete && (
           <ConfirmDeleteDialog
             onCancel={() => setConfirmDelete(false)}
@@ -67,5 +59,4 @@ const ItemDetailsModal: React.FC<Props> = ({ item, onClose }) => {
     </div>
   );
 };
-
 export default ItemDetailsModal;

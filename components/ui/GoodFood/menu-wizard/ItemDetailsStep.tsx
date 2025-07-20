@@ -3,7 +3,6 @@ import { Input } from "@/components/ui/shadcn/input";
 import { Textarea } from "@/components/ui/shadcn/textarea";
 import { Switch } from "@/components/ui/shadcn/switch";
 import { Button } from "@/components/ui/shadcn/button";
-
 interface ItemDetails {
   id: string;
   name: string;
@@ -13,13 +12,11 @@ interface ItemDetails {
   is_available: boolean;
   position: number;
 }
-
 interface ItemDetailsStepProps {
   initial?: ItemDetails;
   onBack: () => void;
   onNext: (details: ItemDetails) => void;
 }
-
 export default function ItemDetailsStep({ initial, onBack, onNext }: ItemDetailsStepProps) {
   const [name, setName] = useState(initial?.name || "");
   const [description, setDescription] = useState(initial?.description || "");
@@ -27,9 +24,7 @@ export default function ItemDetailsStep({ initial, onBack, onNext }: ItemDetails
   const [promotion, setPromotion] = useState(initial?.promotion || 0);
   const [isAvailable, setIsAvailable] = useState(initial?.is_available ?? true);
   const [position, setPosition] = useState(initial?.position || 1);
-
   const canNext = name.trim() !== "" && price >= 0;
-
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">Étape 2: Détails de l&apos;article</h3>

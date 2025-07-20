@@ -62,16 +62,16 @@ GET /api/proxy/orders/{restaurantId}
   statusCode: 200,
   message: "Success",
   data: {
-    order_count: number,      // Completed orders
-    menu_item_id: number,     // Most popular item ID
+    order_count: number,
+    menu_item_id: number,
     menu_item: {
       id: number,
       name: string,
       price: string,
       promotion: string
     },
-    item_count: number,       // Total items sold
-    revenue: number           // Total revenue
+    item_count: number,
+    revenue: number
   }
 }
 ```

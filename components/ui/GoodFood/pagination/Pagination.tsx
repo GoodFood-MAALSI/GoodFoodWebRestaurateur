@@ -1,9 +1,7 @@
 "use client";
-
 import { Button } from "@/components/ui/shadcn/button";
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import { COLORS } from "@/app/constants";
-
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
@@ -14,7 +12,6 @@ interface PaginationProps {
   showItemsPerPage?: boolean;
   disabled?: boolean;
 }
-
 export function Pagination({
   currentPage,
   totalPages,
@@ -28,16 +25,12 @@ export function Pagination({
   const generatePageNumbers = () => {
     const pages: (number | string)[] = [];
     const maxVisiblePages = 5;
-    
     if (totalPages <= maxVisiblePages) {
-      // Show all pages if total is small
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
     } else {
-      // Show truncated pagination
       if (currentPage <= 3) {
-        // Show first pages + ellipsis + last page
         for (let i = 1; i <= 4; i++) {
           pages.push(i);
         }
@@ -46,7 +39,6 @@ export function Pagination({
           pages.push(totalPages);
         }
       } else if (currentPage >= totalPages - 2) {
-        // Show first page + ellipsis + last pages
         pages.push(1);
         if (totalPages > 5) {
           pages.push('...');
@@ -55,7 +47,6 @@ export function Pagination({
           pages.push(i);
         }
       } else {
-        // Show first + ellipsis + current area + ellipsis + last
         pages.push(1);
         pages.push('...');
         for (let i = currentPage - 1; i <= currentPage + 1; i++) {
@@ -65,32 +56,25 @@ export function Pagination({
         pages.push(totalPages);
       }
     }
-    
     return pages;
   };
-
   const pageNumbers = generatePageNumbers();
-
   const handlePrevious = () => {
     if (currentPage > 1 && !disabled) {
       onPageChange(currentPage - 1);
     }
   };
-
   const handleNext = () => {
     if (currentPage < totalPages && !disabled) {
       onPageChange(currentPage + 1);
     }
   };
-
   const handlePageClick = (page: number | string) => {
     if (typeof page === 'number' && page !== currentPage && !disabled) {
       onPageChange(page);
     }
   };
-
   const itemsPerPageOptions = [5, 10, 20, 50];
-
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
       {/* Items per page selector */}
@@ -111,7 +95,6 @@ export function Pagination({
           </select>
         </div>
       )}
-
       {/* Page info */}
       {totalItems && (
         <div className="text-sm text-gray-700">
@@ -125,7 +108,6 @@ export function Pagination({
           )}
         </div>
       )}
-
       {/* Pagination controls */}
       {totalPages > 1 && (
         <div className="flex items-center gap-1">
@@ -140,7 +122,6 @@ export function Pagination({
             <ChevronLeft size={16} />
             Précédent
           </Button>
-
           {/* Page numbers */}
           <div className="flex items-center gap-1 mx-2">
             {pageNumbers.map((page, index) => (
@@ -171,7 +152,6 @@ export function Pagination({
               </div>
             ))}
           </div>
-
           {/* Next button */}
           <Button
             variant="outline"

@@ -1,11 +1,9 @@
 import React from "react";
 import { Button } from "@/components/ui/shadcn/button";
-
 interface ConfirmDeleteDialogProps {
   onCancel: () => void;
   onConfirm: () => void;
 }
-
 const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
   onCancel,
   onConfirm,
@@ -27,5 +25,4 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
     </div>
   </div>
 );
-
 export default ConfirmDeleteDialog;

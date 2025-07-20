@@ -1,21 +1,17 @@
 "use client";
-
 import dynamic from 'next/dynamic';
 import { MapPin } from "lucide-react";
 import { COLORS } from '@/app/constants';
-
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
-
 interface MinimapProps {
   latitude?: number;
   longitude?: number;
   address?: string;
   className?: string;
 }
-
 export default function Minimap({ 
   latitude = 48.8566, 
   longitude = 2.3522, 
@@ -24,7 +20,6 @@ export default function Minimap({
 }: MinimapProps) {
   const createCustomIcon = () => {
     if (typeof window !== 'undefined') {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const L = require('leaflet');
       return L.divIcon({
         html: `
@@ -54,7 +49,6 @@ export default function Minimap({
     }
     return null;
   };
-
   return (
     <div className={`relative bg-white/10 backdrop-blur-sm rounded-lg border border-white/20 p-3 h-full w-full ${className}`}>
       <div className="relative w-full h-full rounded-lg overflow-hidden border border-white/30 min-h-[200px]">
@@ -89,14 +83,12 @@ export default function Minimap({
             </Marker>
           </MapContainer>
         )}
-        
         {typeof window === 'undefined' && (
           <div className="w-full h-full bg-gradient-to-br from-blue-100/20 to-green-100/20 flex items-center justify-center">
             <MapPin className="w-8 h-8 text-white/70" />
           </div>
         )}
       </div>
-
       <div className="mt-2 text-center">
         <p className="text-white/90 text-xs font-medium truncate">
           {address}

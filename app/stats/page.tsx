@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { useRestaurants } from "@/components/hooks/useRestaurants";
 import { useCurrentUserId } from "@/components/hooks/useCurrentUserId";
@@ -17,7 +16,6 @@ import {
   AlertCircle
 } from "lucide-react";
 import { Toaster } from "@/components/ui/shadcn/sonner";
-
 interface Restaurant {
   id: number;
   name: string;
@@ -27,7 +25,6 @@ interface Restaurant {
   review_count?: number;
   average_rating?: number;
 }
-
 export default function StatsPage() {
   const { userId, loading: userLoading } = useCurrentUserId();
   const { restaurants, loading: restaurantsLoading } = useRestaurants(userId || 1);
@@ -35,30 +32,24 @@ export default function StatsPage() {
   const { stats, loading: statsLoading, error: statsError, refetch } = useRestaurantStats(
     selectedRestaurant?.id || null
   );
-
-  // Select the first restaurant by default
   useEffect(() => {
     if (restaurants.length > 0 && !selectedRestaurant) {
       setSelectedRestaurant(restaurants[0]);
     }
   }, [restaurants, selectedRestaurant]);
-
   const handleRefresh = () => {
     refetch();
   };
-
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: 'EUR'
     }).format(amount);
   };
-
   const calculateAverageOrderValue = () => {
     if (!stats || stats.order_count === 0) return 0;
     return stats.revenue / stats.order_count;
   };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -74,7 +65,6 @@ export default function StatsPage() {
                 Analysez les performances de vos restaurants
               </p>
             </div>
-            
             <button
               onClick={handleRefresh}
               disabled={statsLoading}
@@ -86,7 +76,6 @@ export default function StatsPage() {
             </button>
           </div>
         </div>
-
         {/* Restaurant Selector */}
         <div className="mb-8">
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
@@ -101,7 +90,6 @@ export default function StatsPage() {
             />
           </div>
         </div>
-
         {/* Stats Content */}
         {!selectedRestaurant && !restaurantsLoading ? (
           <div className="text-center py-12">
@@ -146,7 +134,6 @@ export default function StatsPage() {
                 </div>
               ))}
             </div>
-            
             {/* Loading skeleton for popular menu item */}
             <div className="animate-pulse">
               <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
@@ -177,7 +164,6 @@ export default function StatsPage() {
                 icon={ShoppingBag}
                 color={COLORS.primary}
               />
-              
               <StatsCard
                 title="Chiffre d'affaires"
                 value={formatCurrency(stats.revenue)}
@@ -185,7 +171,6 @@ export default function StatsPage() {
                 icon={Euro}
                 color={COLORS.secondary}
               />
-              
               <StatsCard
                 title="Articles vendus"
                 value={stats.item_count}
@@ -193,7 +178,6 @@ export default function StatsPage() {
                 icon={BarChart3}
                 color={COLORS.status.medium}
               />
-              
               <StatsCard
                 title="Panier moyen"
                 value={formatCurrency(calculateAverageOrderValue())}
@@ -202,13 +186,11 @@ export default function StatsPage() {
                 color={COLORS.status.darker}
               />
             </div>
-
             {/* Popular Menu Item */}
             <PopularMenuItem 
               menuItem={stats.menu_item}
               itemCount={stats.item_count}
             />
-
             {/* Additional insights */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
@@ -224,7 +206,6 @@ export default function StatsPage() {
                     avec {stats.item_count} ventes.
                   </p>
                 </div>
-                
                 <div className="p-4 bg-green-50 rounded-lg border border-green-200">
                   <h4 className="font-medium text-green-900 mb-2">
                     Performance
@@ -249,7 +230,6 @@ export default function StatsPage() {
           </div>
         )}
       </div>
-      
       <Toaster />
     </div>
   );

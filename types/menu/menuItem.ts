@@ -1,5 +1,4 @@
 import { MenuItemOption } from "./menuItemOption";
-
 export interface MenuItemImage {
   id: number;
   filename: string;
@@ -12,18 +11,17 @@ export interface MenuItemImage {
   entityType: string;
   created_at: string;
 }
-
 export interface MenuItem {
   id: number;
   name: string;
   price: string;
   description: string;
-  picture?: string; // Keep for backwards compatibility
+  picture?: string;
   promotion: string;
   is_available: boolean;
   position: number;
   menuCategoryId: number;
   menuItemOptions: MenuItemOption[];
-  images?: MenuItemImage[]; // New images array from API
+  images?: MenuItemImage[];
   imageId?: number;
 }

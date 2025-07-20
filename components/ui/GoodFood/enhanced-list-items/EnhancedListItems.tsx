@@ -14,15 +14,12 @@ import {
   RotateCcw,
   ChefHat
 } from "lucide-react";
-
 interface EnhancedListItemsProps {
   categories: MenuCategory[];
   loading?: boolean;
 }
-
 type ViewMode = 'categories' | 'grid';
 type FilterMode = 'all' | 'available' | 'unavailable';
-
 const EnhancedListItems: React.FC<EnhancedListItemsProps> = ({ 
   categories, 
   loading = false 
@@ -31,15 +28,10 @@ const EnhancedListItems: React.FC<EnhancedListItemsProps> = ({
   const [filterMode, setFilterMode] = useState<FilterMode>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedCategories, setExpandedCategories] = useState<Record<number, boolean>>({});
-
-  // Get all items from all categories
   const allItems = categories.flatMap(category => category.menuItems);
-  
-  // Filter items based on search and filter mode
   const filteredItems = allItems.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          item.description.toLowerCase().includes(searchQuery.toLowerCase());
-    
     switch (filterMode) {
       case 'available':
         return matchesSearch && item.is_available;
@@ -49,14 +41,11 @@ const EnhancedListItems: React.FC<EnhancedListItemsProps> = ({
         return matchesSearch;
     }
   });
-
-  // Filter categories based on search
   const filteredCategories = categories.map(category => ({
     ...category,
     menuItems: category.menuItems.filter(item => {
       const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            item.description.toLowerCase().includes(searchQuery.toLowerCase());
-      
       switch (filterMode) {
         case 'available':
           return matchesSearch && item.is_available;
@@ -67,13 +56,11 @@ const EnhancedListItems: React.FC<EnhancedListItemsProps> = ({
       }
     })
   })).filter(category => category.menuItems.length > 0);
-
   const totalItems = allItems.length;
   const availableItems = allItems.filter(item => item.is_available).length;
   const unavailableItems = totalItems - availableItems;
-
   const toggleAllCategories = () => {
-    const allExpanded = Object.values(expandedCategories).every(Boolean);
+    const allExpanded = categories.every(category => expandedCategories[category.id] ?? true);
     const newState: Record<number, boolean> = {};
     categories.forEach(category => {
       newState[category.id] = !allExpanded;
@@ -81,11 +68,16 @@ const EnhancedListItems: React.FC<EnhancedListItemsProps> = ({
     setExpandedCategories(newState);
   };
 
+  const handleCategoryExpandedChange = (categoryId: number, expanded: boolean) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [categoryId]: expanded
+    }));
+  };
   const resetFilters = () => {
     setSearchQuery('');
     setFilterMode('all');
   };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -94,7 +86,6 @@ const EnhancedListItems: React.FC<EnhancedListItemsProps> = ({
       </div>
     );
   }
-
   if (totalItems === 0) {
     return (
       <div className="text-center py-12">
@@ -110,7 +101,6 @@ const EnhancedListItems: React.FC<EnhancedListItemsProps> = ({
       </div>
     );
   }
-
   return (
     <div className="w-full space-y-6">
       {/* Header with Stats */}
@@ -135,7 +125,6 @@ const EnhancedListItems: React.FC<EnhancedListItemsProps> = ({
               </div>
             </div>
           </div>
-          
           <div className="flex items-center space-x-3">
             <span className="text-sm text-gray-500">Catégories: {categories.length}</span>
             <div className="h-6 w-px bg-gray-300"></div>
@@ -145,7 +134,6 @@ const EnhancedListItems: React.FC<EnhancedListItemsProps> = ({
           </div>
         </div>
       </div>
-
       {/* Controls */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
         <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
@@ -160,7 +148,6 @@ const EnhancedListItems: React.FC<EnhancedListItemsProps> = ({
               className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
-
           <div className="flex items-center space-x-3">
             {/* Filter Buttons */}
             <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
@@ -197,7 +184,6 @@ const EnhancedListItems: React.FC<EnhancedListItemsProps> = ({
                 <span>Indisponibles</span>
               </button>
             </div>
-
             {/* View Mode Toggle */}
             <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
               <button
@@ -223,7 +209,6 @@ const EnhancedListItems: React.FC<EnhancedListItemsProps> = ({
                 <Grid3X3 className="w-4 h-4" />
               </button>
             </div>
-
             {/* Reset Button */}
             {(searchQuery || filterMode !== 'all') && (
               <button
@@ -234,7 +219,6 @@ const EnhancedListItems: React.FC<EnhancedListItemsProps> = ({
                 <RotateCcw className="w-4 h-4" />
               </button>
             )}
-
             {/* Expand/Collapse All (only in categories view) */}
             {viewMode === 'categories' && (
               <button
@@ -242,13 +226,12 @@ const EnhancedListItems: React.FC<EnhancedListItemsProps> = ({
                 className="px-3 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
                 title="Étendre/Réduire toutes les catégories"
               >
-                {Object.values(expandedCategories).every(Boolean) ? 'Réduire tout' : 'Étendre tout'}
+                {categories.every(category => expandedCategories[category.id] ?? true) ? 'Réduire tout' : 'Étendre tout'}
               </button>
             )}
           </div>
         </div>
       </div>
-
       {/* Content */}
       {filteredItems.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-100">
@@ -273,11 +256,13 @@ const EnhancedListItems: React.FC<EnhancedListItemsProps> = ({
         <div>
           {viewMode === 'categories' ? (
             <div className="space-y-6">
-              {filteredCategories.map((category) => (
+              {filteredCategories.map((category, index) => (
                 <CategoryCard
                   key={category.id}
                   category={category}
-                  defaultExpanded={expandedCategories[category.id] ?? true}
+                  categoryIndex={index}
+                  isExpanded={expandedCategories[category.id] ?? true}
+                  onExpandedChange={(expanded) => handleCategoryExpandedChange(category.id, expanded)}
                 />
               ))}
             </div>
@@ -295,5 +280,4 @@ const EnhancedListItems: React.FC<EnhancedListItemsProps> = ({
     </div>
   );
 };
-
 export default EnhancedListItems;

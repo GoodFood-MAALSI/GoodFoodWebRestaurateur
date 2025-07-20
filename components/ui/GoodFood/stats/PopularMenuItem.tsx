@@ -1,20 +1,16 @@
 "use client";
-
 import React from "react";
 import { COLORS } from "@/app/constants";
 import { MenuItem } from "@/types/stats";
 import { Crown, Euro } from "lucide-react";
-
 interface PopularMenuItemProps {
   menuItem: MenuItem;
   itemCount: number;
 }
-
 export default function PopularMenuItem({ menuItem, itemCount }: PopularMenuItemProps) {
   const hasPromotion = parseFloat(menuItem.promotion) > 0;
   const originalPrice = parseFloat(menuItem.price);
   const promotionPrice = originalPrice - parseFloat(menuItem.promotion);
-
   return (
     <div className="p-6 rounded-xl bg-white shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
       <div className="flex items-start justify-between mb-4">
@@ -38,14 +34,12 @@ export default function PopularMenuItem({ menuItem, itemCount }: PopularMenuItem
           </div>
         </div>
       </div>
-      
       <div className="bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-lg border border-yellow-200">
         <div className="flex items-center justify-between">
           <div className="flex-1">
             <h4 className="font-semibold text-gray-900 mb-2">
               {menuItem.name}
             </h4>
-            
             <div className="flex items-center space-x-2">
               <Euro className="w-4 h-4 text-gray-600" />
               {hasPromotion ? (
@@ -67,7 +61,6 @@ export default function PopularMenuItem({ menuItem, itemCount }: PopularMenuItem
               )}
             </div>
           </div>
-          
           <div className="text-right">
             <div className="bg-yellow-100 text-yellow-800 px-3 py-2 rounded-lg">
               <div className="text-2xl font-bold">

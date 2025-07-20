@@ -3,18 +3,15 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { Button } from "@/components/ui/shadcn/button";
 import { COLORS } from "@/app/constants";
-
 interface EditItemFormProps {
   item: MenuItem;
   onSuccess: () => void;
 }
-
 interface FormValues {
   name: string;
   price: string;
   image: FileList;
 }
-
 const EditItemForm: React.FC<EditItemFormProps> = ({ item, onSuccess }) => {
   const {
     register,
@@ -26,12 +23,9 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ item, onSuccess }) => {
       price: item.price,
     },
   });
-
   const [errorMessage, setErrorMessage] = useState("");
-
   const onSubmit = async (data: FormValues) => {
     setErrorMessage("");
-
     try {
       const res = await fetch(`api/menu-items/${item.id}`, {
         method: "PATCH",
@@ -42,15 +36,11 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ item, onSuccess }) => {
           price: data.price,
         }),
       });
-
       if (!res.ok) throw new Error("Échec de la mise à jour des données.");
-
       if (data.image && data.image.length > 0) {
         const formData = new FormData();
         formData.append("file", data.image[0]);
-
         const method = item.picture ? "PATCH" : "POST";
-
         const imgRes = await fetch(
           `/menu-items/${item.id}/upload-image`,
           {
@@ -58,7 +48,6 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ item, onSuccess }) => {
             body: formData,
           }
         );
-
         if (!imgRes.ok)
           throw new Error(
             method === "POST"
@@ -66,13 +55,11 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ item, onSuccess }) => {
               : "Échec du remplacement de l’image."
           );
       }
-
       onSuccess();
     } catch (error) {
       setErrorMessage((error as Error).message);
     }
   };
-
   const handleImageRemove = async () => {
     if (!item.imageId) return;
     try {
@@ -88,7 +75,6 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ item, onSuccess }) => {
       setErrorMessage((error as Error).message);
     }
   };
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
       <div>
@@ -99,7 +85,6 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ item, onSuccess }) => {
         />
         {errors.name && <p className="text-sm" style={{ color: COLORS.error }}>Nom requis</p>}
       </div>
-
       <div>
         <label className="block text-sm font-medium mb-1">Prix (€)</label>
         <input
@@ -110,7 +95,6 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ item, onSuccess }) => {
         />
         {errors.price && <p className="text-sm" style={{ color: COLORS.error }}>Prix requis</p>}
       </div>
-
       <div>
         <label className="block text-sm font-medium mb-1">
           {item.picture ? "Remplacer l’image" : "Image (optionnelle)"}
@@ -122,7 +106,6 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ item, onSuccess }) => {
           className="w-full"
         />
       </div>
-
       {item.picture && (
         <div className="flex flex-col items-start space-y-2">
           <img
@@ -144,9 +127,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ item, onSuccess }) => {
           </Button>
         </div>
       )}
-
       {errorMessage && <p className="text-sm" style={{ color: COLORS.error }}>{errorMessage}</p>}
-
       <div className="flex justify-end pt-2">
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Sauvegarde..." : "Enregistrer"}
@@ -155,5 +136,4 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ item, onSuccess }) => {
     </form>
   );
 };
-
 export default EditItemForm;

@@ -8,27 +8,19 @@ import OptionValueStep from "./OptionValueStep";
 import ProgressionSteps from "@/components/ui/GoodFood/progression-steps/ProgressionSteps";
 import { MenuItem } from "@/types/menu/menuItem";
 import { COLORS } from "@/app/constants";
-
 interface MenuWizardProps {
   restaurantId: number;
   onFinish: (data: MenuItem) => void;
 }
-
 export default function MenuWizard({ restaurantId, onFinish }: MenuWizardProps) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [category, setCategory] = useState<any>();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [details, setDetails] = useState<any>();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [options, setOptions] = useState<any[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [values, setValues] = useState<any[][]>([]);
-
   const next = () => setStep(s => s + 1);
   const back = () => setStep(s => s - 1);
-
   const handleFinish = () => {
     const item: MenuItem = {
       id: Date.now(),
@@ -52,7 +44,6 @@ export default function MenuWizard({ restaurantId, onFinish }: MenuWizardProps) 
     onFinish(item);
     setOpen(false);
   };
-
   useEffect(() => {
     if (open) {
       setStep(0);
@@ -62,7 +53,6 @@ export default function MenuWizard({ restaurantId, onFinish }: MenuWizardProps) 
       setValues([]);
     }
   }, [open]);
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-
 interface Restaurant {
   id: number;
   name: string;
@@ -7,7 +6,6 @@ interface Restaurant {
   image?: string;
   is_open: boolean;
 }
-
 interface RestaurantOwner {
   id: number;
   email: string;
@@ -18,18 +16,15 @@ interface RestaurantOwner {
   updated_at: string;
   __entity: "User";
 }
-
 export function useCurrentUser() {
   const [user, setUser] = useState<RestaurantOwner | null>(null);
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   useEffect(() => {
     const fetchCurrentUser = async () => {
       setLoading(true);
       setError(null);
-
       try {
         const restaurantResponse = await fetch('/api/proxy/restaurant/me', {
           method: 'GET',
@@ -38,18 +33,14 @@ export function useCurrentUser() {
           },
           credentials: 'include',
         });
-
         if (!restaurantResponse.ok) {
           throw new Error(`Failed to fetch restaurant data: ${restaurantResponse.status}`);
         }
-
         const restaurantData = await restaurantResponse.json();
-        
         let restaurantList = [];
         if (restaurantData && restaurantData.data && Array.isArray(restaurantData.data.restaurants)) {
           restaurantList = restaurantData.data.restaurants;
         }
-
         const userResponse = await fetch('/api/proxy/me', {
           method: 'GET',
           headers: {
@@ -57,11 +48,9 @@ export function useCurrentUser() {
           },
           credentials: 'include',
         });
-
         let userData = null;
         if (userResponse.ok) {
           const userResponseData = await userResponse.json();
-          
           userData = userResponseData.data || userResponseData;
         } else {
           if (restaurantList.length > 0) {
@@ -78,7 +67,6 @@ export function useCurrentUser() {
             };
           }
         }
-
         const processedRestaurants = Array.isArray(restaurantList) ? 
           restaurantList.map((r: {
             id: number;
@@ -93,20 +81,16 @@ export function useCurrentUser() {
             image: r.image ?? undefined,
             is_open: r.is_open ?? false,
           })) : [];
-        
         setUser(userData);
         setRestaurants(processedRestaurants);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to fetch restaurant owner data';
-        console.error('[useCurrentUser] Error fetching restaurant owner data:', errorMessage);
         setError(errorMessage);
       } finally {
         setLoading(false);
       }
     };
-
     fetchCurrentUser();
   }, []);
-
   return { user, restaurants, loading, error };
 }

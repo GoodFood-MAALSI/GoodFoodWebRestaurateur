@@ -1,17 +1,12 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-
 const BACKEND = process.env.BACKEND_URL || "http://localhost:8080";
-
 export async function GET() {
   try {
     const token = (await cookies()).get("token")?.value;
-
     if (!token) {
-      console.error('[Me Proxy] No auth token found');
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
     const restaurantResponse = await fetch(`${BACKEND}/restaurateur/api/restaurant/me`, {
       method: 'GET',
       headers: {
@@ -19,12 +14,8 @@ export async function GET() {
         'Content-Type': 'application/json',
       },
     });
-
     if (!restaurantResponse.ok) {
-      console.error(`[Me Proxy] Failed to fetch restaurant data:`, restaurantResponse.status, restaurantResponse.statusText);
       const errorText = await restaurantResponse.text();
-      console.error(`[Me Proxy] Restaurant error response:`, errorText);
-      
       return NextResponse.json(
         { 
           error: 'Failed to fetch restaurant data',
@@ -34,22 +25,17 @@ export async function GET() {
         { status: restaurantResponse.status }
       );
     }
-
     const restaurantData = await restaurantResponse.json();
-
     let userId = null;
     if (restaurantData?.data?.restaurants && Array.isArray(restaurantData.data.restaurants) && restaurantData.data.restaurants.length > 0) {
       userId = restaurantData.data.restaurants[0]?.userId;
     }
-
     if (!userId) {
-      console.error(`[Me Proxy] Could not extract user ID from restaurant data`);
       return NextResponse.json(
         { error: 'Could not extract user ID from restaurant data' },
         { status: 400 }
       );
     }
-
     const userResponse = await fetch(`${BACKEND}/restaurateur/api/users/${userId}`, {
       method: 'GET',
       headers: {
@@ -57,12 +43,8 @@ export async function GET() {
         'Content-Type': 'application/json',
       },
     });
-
     if (!userResponse.ok) {
-      console.error(`[Me Proxy] Failed to fetch user data:`, userResponse.status, userResponse.statusText);
       const errorText = await userResponse.text();
-      console.error(`[Me Proxy] User error response:`, errorText);
-      
       return NextResponse.json(
         { 
           error: 'Failed to fetch user data',
@@ -72,12 +54,9 @@ export async function GET() {
         { status: userResponse.status }
       );
     }
-
     const userData = await userResponse.json();
-
     return NextResponse.json(userData);
   } catch (error) {
-    console.error('[Me Proxy] Error fetching current user data:', error);
     return NextResponse.json(
       { 
         error: 'Internal server error while fetching current user data',

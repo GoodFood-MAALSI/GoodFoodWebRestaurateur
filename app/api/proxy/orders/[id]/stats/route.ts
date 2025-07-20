@@ -26,7 +26,6 @@ export async function GET(
     return NextResponse.json(data, { status: backendRes.status });
   } catch (error) {
     const { id } = await params;
-    console.error(`Error fetching stats for restaurant ${id}:`, error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

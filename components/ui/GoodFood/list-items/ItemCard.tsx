@@ -3,35 +3,30 @@ import { MenuItem } from "@/types/menu/menuItem";
 import MenuItemModal from "@/components/ui/GoodFood/menu-item-modal/MenuItemModal";
 import { useItemModal } from "@/components/hooks/useItemModal";
 import { getMenuItemImageUrl } from "@/lib/imageUtils";
+import { COLORS } from "@/app/constants";
 import { Eye, EyeOff, Star, Percent, Settings } from "lucide-react";
-
 interface ItemCardProps {
   item: MenuItem;
   onUpdate?: (updatedItem: MenuItem) => void;
   onDelete?: (itemId: number) => void;
 }
-
 const ItemCard: React.FC<ItemCardProps> = ({ item, onUpdate, onDelete }) => {
   const { isOpen, open, close } = useItemModal();
-
   const handleUpdate = (updatedItem: MenuItem) => {
     if (onUpdate) {
       onUpdate(updatedItem);
     }
     close();
   };
-
   const handleDelete = (itemId: number) => {
     if (onDelete) {
       onDelete(itemId);
     }
     close();
   };
-
   const imageUrl = getMenuItemImageUrl(item);
   const hasPromotion = parseFloat(item.promotion?.toString() || "0") > 0;
   const hasOptions = item.menuItemOptions && item.menuItemOptions.length > 0;
-
   return (
     <>
       <div 
@@ -39,6 +34,11 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onUpdate, onDelete }) => {
         className={`group relative bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:-translate-y-1 ${
           !item.is_available ? 'opacity-75' : ''
         }`}
+        style={{
+          '--primary-color': COLORS.primary,
+          '--secondary-color': COLORS.secondary,
+          '--gradient-text': `linear-gradient(135deg, ${COLORS.primary}, ${COLORS.secondary})`
+        } as React.CSSProperties}
       >
         {/* Availability Badge */}
         <div className="absolute top-3 left-3 z-10">
@@ -60,7 +60,6 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onUpdate, onDelete }) => {
             )}
           </div>
         </div>
-
         {/* Promotion Badge */}
         {hasPromotion && (
           <div className="absolute top-3 right-3 z-10">
@@ -70,7 +69,6 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onUpdate, onDelete }) => {
             </div>
           </div>
         )}
-
         {/* Image Container */}
         <div className="relative w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
           <img
@@ -81,10 +79,13 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onUpdate, onDelete }) => {
               e.currentTarget.src = "/GoodFood/logo.png";
             }}
           />
-          
           {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          
+          <div 
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            style={{
+              background: `linear-gradient(135deg, ${COLORS.primary}20, ${COLORS.secondary}20)`
+            }}
+          />
           {/* Edit Button (visible on hover) */}
           <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg">
@@ -92,11 +93,10 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onUpdate, onDelete }) => {
             </div>
           </div>
         </div>
-
         {/* Content */}
         <div className="p-4 space-y-3">
           <div>
-            <h3 className="font-semibold text-gray-900 text-lg leading-tight group-hover:text-blue-600 transition-colors">
+            <h3 className="font-semibold text-gray-900 text-lg leading-tight transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-[var(--primary-color)] group-hover:to-[var(--secondary-color)] group-hover:bg-clip-text group-hover:text-transparent">
               {item.name}
             </h3>
             <p className="text-gray-600 text-sm mt-1 leading-relaxed overflow-hidden" style={{ 
@@ -107,7 +107,6 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onUpdate, onDelete }) => {
               {item.description || "Aucune description disponible"}
             </p>
           </div>
-
           {/* Price and Features */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -120,7 +119,6 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onUpdate, onDelete }) => {
                 </span>
               )}
             </div>
-            
             <div className="flex items-center space-x-2">
               {hasOptions && (
                 <div className="text-blue-600" title="Article avec options">
@@ -132,7 +130,6 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onUpdate, onDelete }) => {
               </div>
             </div>
           </div>
-
           {/* Options Count */}
           {hasOptions && (
             <div className="text-xs text-gray-500 bg-blue-50 text-blue-700 px-2 py-1 rounded-md">
@@ -140,11 +137,14 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onUpdate, onDelete }) => {
             </div>
           )}
         </div>
-
         {/* Bottom Gradient */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div 
+          className="absolute bottom-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          style={{
+            background: `linear-gradient(to right, ${COLORS.primary}, ${COLORS.secondary})`
+          }}
+        />
       </div>
-
       <MenuItemModal 
         item={item} 
         open={isOpen} 
@@ -155,5 +155,4 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onUpdate, onDelete }) => {
     </>
   );
 };
-
 export default ItemCard;

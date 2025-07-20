@@ -11,7 +11,6 @@ interface Props {
     is_open: boolean;
   };
 }
-
 export function RestaurantDetailsCard({ restaurant }: Props) {
   return (
     <div className="bg-white rounded-xl shadow p-6 space-y-3">

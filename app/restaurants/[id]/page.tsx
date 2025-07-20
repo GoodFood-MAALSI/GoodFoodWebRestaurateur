@@ -130,7 +130,6 @@ export default function RestaurantPage() {
       );
     } catch (error) {
       toast.error("Erreur lors de la mise à jour du statut");
-      console.error('Error toggling restaurant status:', error);
     } finally {
       setIsToggling(false);
     }
@@ -140,7 +139,6 @@ export default function RestaurantPage() {
   const totalReviews = restaurant.review_count || 0;
   const hasReviews = totalReviews > 0;
 
-  // Real stats data or fallbacks
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
@@ -149,7 +147,6 @@ export default function RestaurantPage() {
     }).format(amount);
   };
 
-  // Use real stats or show loading/fallback values
   const displayStats = {
     ordersCount: stats ? stats.order_count : (statsLoading ? '...' : 0),
     revenue: stats ? formatCurrency(stats.revenue) : (statsLoading ? '...' : formatCurrency(0)),
@@ -163,10 +160,7 @@ export default function RestaurantPage() {
     ? `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080'}/restaurateur/api${imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`}`
     : null;
 
-  // Only show real rating breakdown if we have reviews
   const ratingBreakdown: { stars: number; count: number; percentage: number }[] = hasReviews ? [
-    // This would come from real API data in the future
-    // For now, we don't show breakdown without real data
   ] : [];
 
   return (

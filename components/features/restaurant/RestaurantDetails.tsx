@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/shadcn/button";
 import {
@@ -14,7 +13,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { restaurantSchema } from "@/app/create-company/schema";
 import { COLORS } from "@/app/constants";
 import { Edit, Upload, Image as ImageIcon, MapPin, Phone, Mail, Users, X } from "lucide-react";
-
 interface RestaurantDetailsProps {
   restaurant: RestaurantFormValues & { 
     id?: number;
@@ -27,14 +25,12 @@ interface RestaurantDetailsProps {
   onUpdate: (data: Partial<RestaurantFormValues>) => Promise<void>;
   onDelete: () => Promise<void>;
 }
-
 export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: RestaurantDetailsProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const form = useForm<RestaurantFormValues>({
     resolver: zodResolver(restaurantSchema),
     defaultValues: {
@@ -42,65 +38,50 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
       phone_number: restaurant.phone_number?.toString() ?? "",
     },
   });
-
   const { register, handleSubmit, formState: { errors }, getValues } = form;
-
   const handleImageUpload = async (file: File) => {
     if (!file || !restaurant.id) return;
-
     setIsUploadingImage(true);
     try {
       const formData = new FormData();
       formData.append("image", file);
-
       const response = await fetch(`/api/proxy/restaurant/${restaurant.id}/upload-image`, {
         method: "POST",
         body: formData,
       });
-
       if (!response.ok) throw new Error("Échec du téléchargement");
-      
       const result = await response.json();
-      console.log("Upload result:", result);
-      
       let imageUrl = null;
       if (result.data && result.data.images && result.data.images.length > 0) {
         imageUrl = result.data.images[0].path;
       } else {
         imageUrl = result.image_url || result.picture || result.imageUrl;
       }
-      
       if (imageUrl) {
         const fullImagePath = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`;
         setImagePreview(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080'}/restaurateur/api${fullImagePath}`);
         toast.success("Image téléchargée avec succès");
         window.location.reload();
       } else {
-        console.warn("No image URL found in upload response:", result);
         toast.error("Erreur: URL d'image non trouvée");
       }
     } catch (error) {
-      console.error("Error uploading image:", error);
       toast.error("Erreur lors du téléchargement de l'image");
     } finally {
       setIsUploadingImage(false);
     }
   };
-
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
     if (!file.type.startsWith('image/')) {
       toast.error('Veuillez sélectionner un fichier image valide');
       return;
     }
-
     if (file.size > 5 * 1024 * 1024) {
       toast.error('La taille du fichier ne doit pas dépasser 5MB');
       return;
     }
-
     const reader = new FileReader();
     reader.onload = (e) => {
       const result = e.target?.result as string;
@@ -112,11 +93,9 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
     reader.readAsDataURL(file);
     handleImageUpload(file);
   };
-
   const triggerFileInput = () => {
     fileInputRef.current?.click();
   };
-
   const onSubmit = async (values: RestaurantFormValues) => {
     setLoading(true);
     try {
@@ -129,15 +108,12 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
       setLoading(false);
     }
   };
-
   const values = getValues();
-  
   const mainImage = restaurant.images?.find(img => img.isMain);
   const displayImage = mainImage?.path || restaurant.images?.[0]?.path;
   const fullImageUrl = displayImage 
     ? `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080'}/restaurateur/api${displayImage}`
     : null;
-
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
       <div className="relative h-48 bg-gradient-to-r from-gray-100 to-gray-200">
@@ -155,7 +131,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
             <ImageIcon className="w-16 h-16 text-gray-400" />
           </div>
         )}
-        
         <div className="absolute top-4 right-4">
           <Button
             onClick={triggerFileInput}
@@ -167,7 +142,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
             {isUploadingImage ? "Upload..." : "Photo"}
           </Button>
         </div>
-        
         <div className="absolute bottom-4 left-6">
           <h2 className="text-2xl font-bold text-white drop-shadow-lg">
             {values.name}
@@ -177,7 +151,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
           </p>
         </div>
       </div>
-
       <div className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="flex items-start space-x-3">
@@ -193,7 +166,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
               </p>
             </div>
           </div>
-
           <div className="space-y-3">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
@@ -204,7 +176,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
                 <p className="text-gray-600 text-sm">{values.email}</p>
               </div>
             </div>
-            
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
                 <Phone className="w-5 h-5 text-purple-600" />
@@ -216,7 +187,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
             </div>
           </div>
         </div>
-
         <div className="border-t border-gray-100 pt-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -228,7 +198,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
                 <p className="text-gray-600 text-sm">{values.siret}</p>
               </div>
             </div>
-            
             <div className="flex items-center space-x-2">
               <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                 values.is_open 
@@ -241,7 +210,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
           </div>
         </div>
       </div>
-
       <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
         <Dialog open={isEditing} onOpenChange={setIsEditing}>
           <DialogTrigger asChild>
@@ -262,7 +230,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
                 Modifiez les informations de votre restaurant. Tous les champs sont obligatoires.
               </DialogDescription>
             </DialogHeader>
-            
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="space-y-3">
                 <label className="block text-sm font-medium text-gray-700">
@@ -300,7 +267,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
                   )}
                 </div>
               </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -315,7 +281,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
                     <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
                   )}
                 </div>
-                
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Description
@@ -330,7 +295,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
                   )}
                 </div>
               </div>
-
               <div className="space-y-3">
                 <h3 className="text-lg font-semibold text-gray-800">Adresse</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -355,7 +319,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
                     />
                   </div>
                 </div>
-                
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -378,7 +341,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
                     />
                   </div>
                 </div>
-                
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Pays
@@ -390,7 +352,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
                   />
                 </div>
               </div>
-
               <div className="space-y-3">
                 <h3 className="text-lg font-semibold text-gray-800">Contact</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -420,7 +381,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
                   </div>
                 </div>
               </div>
-
               <DialogFooter className="pt-6 border-t border-gray-100">
                 <Button 
                   variant="outline" 
@@ -443,7 +403,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
             </form>
           </DialogContent>
         </Dialog>
-        
         <Button 
           variant="destructive" 
           onClick={onDelete}
@@ -453,7 +412,6 @@ export default function RestaurantDetails({ restaurant, onUpdate, onDelete }: Re
           Supprimer
         </Button>
       </div>
-
       <input
         type="file"
         ref={fileInputRef}

@@ -8,7 +8,6 @@ export interface Item {
   is_available: boolean;
   position: number;
   menuCategoryId: number;
-
   options?: {
     name: string;
     is_required: boolean;
