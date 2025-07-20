@@ -31,6 +31,13 @@ export function useAuthForm() {
           toast.error("Identifiants incorrects. Veuillez vérifier votre email et mot de passe.");
           return;
         }
+        if (response.status === 403 && errorData.suspended) {
+          toast.error("Votre compte a été suspendu. Vous allez être redirigé...");
+          setTimeout(() => {
+            router.push("/notallowed");
+          }, 2000);
+          return;
+        }
         throw new Error(errorData.message || loginTexts.error.default);
       }
       await response.json();

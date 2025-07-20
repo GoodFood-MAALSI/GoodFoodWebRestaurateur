@@ -3,14 +3,22 @@ import { usePathname } from "next/navigation";
 import "@/app/globals.css";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import { useUserStatusCheck } from "@/components/hooks/useUserStatusCheck";
+
 export default function ClientLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
-  const hideNavbarRoutes = ["/", "/create-company", "/auth"];
+  const hideNavbarRoutes = ["/", "/create-company", "/auth", "/notallowed"];
   const showNavbar = !hideNavbarRoutes.includes(pathname);
+  
+  // Only run status check on authenticated pages
+  const isAuthenticatedPage = !hideNavbarRoutes.includes(pathname);
+  if (isAuthenticatedPage) {
+    useUserStatusCheck();
+  }
   return (
     <html lang="fr" className="h-full" data-scroll-behavior="smooth">
       <body className="antialiased h-full flex flex-col">
