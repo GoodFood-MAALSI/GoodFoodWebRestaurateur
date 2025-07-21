@@ -7,7 +7,7 @@ export interface MenuItem {
 export interface RestaurantStats {
   order_count: number;
   menu_item_id: number;
-  menu_item: MenuItem;
+  menu_item: MenuItem | null;
   item_count: number;
   revenue: number;
 }

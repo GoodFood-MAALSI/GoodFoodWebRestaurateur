@@ -27,7 +27,7 @@ interface Restaurant {
 }
 export default function StatsPage() {
   const { userId, loading: userLoading } = useCurrentUserId();
-  const { restaurants, loading: restaurantsLoading } = useRestaurants(userId || 1);
+  const { restaurants, loading: restaurantsLoading } = useRestaurants();
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
   const { stats, loading: statsLoading, error: statsError, refetch } = useRestaurantStats(
     selectedRestaurant?.id || null
@@ -202,8 +202,11 @@ export default function StatsPage() {
                     Article star
                   </h4>
                   <p className="text-blue-700 text-sm">
-                    "{stats.menu_item.name}" représente votre article le plus commandé 
-                    avec {stats.item_count} ventes.
+                    {stats.menu_item ? (
+                      `"${stats.menu_item.name}" représente votre article le plus commandé avec ${stats.item_count} ventes.`
+                    ) : (
+                      `Aucun article populaire identifié pour le moment.`
+                    )}
                   </p>
                 </div>
                 <div className="p-4 bg-green-50 rounded-lg border border-green-200">

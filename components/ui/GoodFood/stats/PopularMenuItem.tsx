@@ -4,10 +4,43 @@ import { COLORS } from "@/app/constants";
 import { MenuItem } from "@/types/stats";
 import { Crown, Euro } from "lucide-react";
 interface PopularMenuItemProps {
-  menuItem: MenuItem;
+  menuItem: MenuItem | null;
   itemCount: number;
 }
 export default function PopularMenuItem({ menuItem, itemCount }: PopularMenuItemProps) {
+  if (!menuItem) {
+    return (
+      <div className="p-6 rounded-xl bg-white shadow-sm border border-gray-100">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center space-x-3">
+            <div 
+              className="p-3 rounded-lg"
+              style={{ 
+                backgroundColor: COLORS.gray[200],
+                color: COLORS.gray[500]
+              }}
+            >
+              <Crown className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Article le plus populaire
+              </h3>
+              <p className="text-sm text-gray-500">
+                Aucune donnée disponible
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+          <p className="text-gray-500 text-center">
+            Aucun article populaire trouvé pour ce restaurant
+          </p>
+        </div>
+      </div>
+    );
+  }
+  
   const hasPromotion = parseFloat(menuItem.promotion) > 0;
   const originalPrice = parseFloat(menuItem.price);
   const promotionPrice = originalPrice - parseFloat(menuItem.promotion);

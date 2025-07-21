@@ -138,7 +138,7 @@ export function useAllRestaurantOrders(userId: number, options: PaginationOption
       const statusString = String(status).toLowerCase();
       const statusId = statusMapping[statusString] || 2;
       const res = await fetch(`/api/proxy/restaurant/${restaurantId}/orders/${orderId}`, {
-        method: "PATCH",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },

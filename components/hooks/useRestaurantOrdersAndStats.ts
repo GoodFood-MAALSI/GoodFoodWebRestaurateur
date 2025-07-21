@@ -70,7 +70,7 @@ export function useRestaurantOrdersAndStats(restaurantId: number): RestaurantOrd
       const statusString = String(status).toLowerCase();
       const statusId = statusMapping[statusString] || 2;
       const res = await fetch(`/api/proxy/orders/${orderId}`, {
-        method: "PATCH",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },

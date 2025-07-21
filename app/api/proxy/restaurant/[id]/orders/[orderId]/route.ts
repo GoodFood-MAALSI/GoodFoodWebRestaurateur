@@ -3,7 +3,7 @@ import { NextResponse, NextRequest } from "next/server";
 
 const BACKEND = process.env.BACKEND_URL || "http://localhost:8080";
 
-export async function PATCH(
+export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string; orderId: string }> }
 ) {
@@ -21,7 +21,7 @@ export async function PATCH(
     const backendRes = await fetch(
       `${BACKEND}/order/api/orders/${orderId}/status`,
       {
-        method: "PATCH",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

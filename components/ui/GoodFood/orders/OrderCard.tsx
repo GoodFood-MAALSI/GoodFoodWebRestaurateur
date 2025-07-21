@@ -101,7 +101,7 @@ export default function OrderCard({ order, onStatusChange, onView }: OrderCardPr
               <Button variant="outline" size="sm" onClick={() => onView(order)}>
                 Voir détails
               </Button>
-              {(currentStatusString.includes("attente") || currentStatusString === "pending") && (
+              {(currentStatusString.includes("attente") || currentStatusString === "pending") && !currentStatusString.includes("livreur") && (
                 <Button 
                   size="sm" 
                   onClick={() => handleStatusChange("accepted")}
@@ -111,7 +111,7 @@ export default function OrderCard({ order, onStatusChange, onView }: OrderCardPr
                   Accepter
                 </Button>
               )}
-              {nextStatus && !currentStatusString.includes("attente") && currentStatusString !== "pending" && (
+              {nextStatus && currentStatusString !== "pending" && !currentStatusString.includes("attente") && currentStatusString !== "delivered" && currentStatusString !== "cancelled" && (
                 <Button 
                   size="sm" 
                   onClick={() => handleStatusChange(nextStatus)}
@@ -121,7 +121,7 @@ export default function OrderCard({ order, onStatusChange, onView }: OrderCardPr
                   {statusLabels[nextStatus] || nextStatus}
                 </Button>
               )}
-              {(currentStatusString.includes("attente") || currentStatusString === "pending") && (
+              {(currentStatusString.includes("attente") || currentStatusString === "pending") && !currentStatusString.includes("livreur") && (
                 <Button 
                   variant="destructive" 
                   size="sm" 

@@ -36,9 +36,29 @@ export function useRestaurantStats(restaurantId: number | null) {
   }, [restaurantId]);
   const refetch = () => {
     if (restaurantId) {
-      setLoading(true);
-      setError(null);
-      setStats(null);
+      const fetchStats = async () => {
+        try {
+          setLoading(true);
+          setError(null);
+          const res = await fetch(`/api/proxy/orders/${restaurantId}/stats`, {
+            credentials: "include",
+          });
+          if (!res.ok) {
+            throw new Error("Erreur lors du chargement des statistiques");
+          }
+          const json = await res.json();
+          if (json.statusCode === 200 && json.data) {
+            setStats(json.data);
+          } else {
+            throw new Error(json.message || "Données invalides");
+          }
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "Erreur inconnue");
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchStats();
     }
   };
   return { stats, loading, error, refetch };

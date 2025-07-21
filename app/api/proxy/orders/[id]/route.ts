@@ -30,7 +30,7 @@ export async function GET(
   }
 }
 
-export async function PATCH(
+export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -47,7 +47,7 @@ export async function PATCH(
     const backendRes = await fetch(
       `${BACKEND}/order/api/orders/${id}/status`,
       {
-        method: "PATCH",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

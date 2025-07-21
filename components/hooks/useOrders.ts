@@ -50,7 +50,7 @@ export function useOrders(restaurantId?: number) {
         ? `/api/proxy/restaurant/${restaurantId}/orders/${orderId}`
         : `/api/proxy/orders/${orderId}`;
       const res = await fetch(endpoint, {
-        method: "PATCH",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
